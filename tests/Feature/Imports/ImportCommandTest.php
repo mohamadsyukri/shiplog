@@ -3,7 +3,6 @@
 use App\Enums\ImportSource;
 use App\Models\Entry;
 use App\Models\Import;
-use App\Models\Lane;
 
 beforeEach(function (): void {
     $this->path = sys_get_temp_dir().'/shiplog-2026-10-20_to_2026-10-21.json';
@@ -13,13 +12,6 @@ beforeEach(function (): void {
 afterEach(function (): void {
     @unlink($this->path);
 });
-
-function nothingWritten(): void
-{
-    expect(Lane::query()->count())->toBe(0)
-        ->and(Entry::query()->count())->toBe(0)
-        ->and(Import::query()->count())->toBe(0);
-}
 
 it('imports a file and prints the range, lanes and cards', function (): void {
     $this->artisan('shiplog:import', ['file' => $this->path])

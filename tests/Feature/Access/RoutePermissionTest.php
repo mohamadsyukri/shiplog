@@ -9,9 +9,9 @@ it('creates one permission per screen action, folding supporting routes into the
     $names = Permission::query()->pluck('name');
 
     expect($names)
-        ->toContain('announcements.index', 'announcements.create', 'announcements.edit', 'admin.users.index')
+        ->toContain('announcements.index', 'announcements.create', 'announcements.edit', 'admin.users.index', 'imports.index', 'imports.create')
         // datatable/export/pdf → index, store → create, update → edit (config/access.php aliases)
-        ->not->toContain('announcements.datatable', 'announcements.export', 'announcements.store', 'announcements.update')
+        ->not->toContain('announcements.datatable', 'announcements.export', 'announcements.store', 'announcements.update', 'imports.store')
         // open to every signed-in user, so never a permission
         ->not->toContain('board.index', 'profile.edit');
 });
@@ -68,6 +68,6 @@ it('shows only the sidebar items the user may open', function (): void {
 it('labels the sidebar in English', function (): void {
     $this->actingAs(superAdmin())
         ->get(route('board.index'))
-        ->assertSeeInOrder(['Board', 'Announcements', 'Administration', 'Users', 'Roles', 'Audit Trail'])
+        ->assertSeeInOrder(['Board', 'Announcements', 'Imports', 'Administration', 'Users', 'Roles', 'Audit Trail'])
         ->assertDontSee(['Papan Pemuka', 'Pengumuman', 'Pentadbiran', 'Pengguna', 'Peranan', 'Jejak Audit']);
 });

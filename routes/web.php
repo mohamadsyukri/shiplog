@@ -10,6 +10,7 @@ Route::middleware(['auth', 'route.permission'])->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
     require __DIR__.'/modules/board.php';
+    require __DIR__.'/modules/imports.php';
     require __DIR__.'/modules/announcements.php';
     require __DIR__.'/modules/admin.php';
 });

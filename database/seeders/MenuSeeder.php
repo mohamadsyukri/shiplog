@@ -17,6 +17,7 @@ final class MenuSeeder extends Seeder
     {
         $this->item(null, 'Board', 'bi-kanban', 'board.index', 1);
         $this->item(null, 'Announcements', 'bi-megaphone', 'announcements.index', 2);
+        $this->item(null, 'Imports', 'bi-cloud-upload', 'imports.index', 3);
 
         $admin = Menu::query()->updateOrCreate(
             ['parent_id' => null, 'route_name' => null, 'label' => 'Administration'],

@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Entry;
+use App\Models\Import;
+use App\Models\Lane;
 use App\Models\User;
 use Database\Seeders\MenuSeeder;
 use Database\Seeders\PermissionSeeder;
@@ -53,4 +56,14 @@ function shiplogFile(array $changes = [], array $remove = []): string
     Arr::forget($file, $remove);
 
     return json_encode($file, JSON_THROW_ON_ERROR);
+}
+
+/**
+ * After a refused import: no lane, card or imports row was written.
+ */
+function nothingWritten(): void
+{
+    expect(Lane::query()->count())->toBe(0)
+        ->and(Entry::query()->count())->toBe(0)
+        ->and(Import::query()->count())->toBe(0);
 }

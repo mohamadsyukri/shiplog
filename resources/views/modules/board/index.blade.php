@@ -18,6 +18,9 @@
                 <h2 class="h5">{{ __('No cards yet.') }}</h2>
                 <p>{{ __('Ask Claude Code to "update my board" with the Shiplog skill, or import a file you wrote yourself:') }}</p>
                 <pre class="mb-0"><code>php artisan shiplog:import path/to/shiplog-file.json</code></pre>
+                @can('imports.create')
+                    <p class="mt-3 mb-0">{{ __('Or upload it:') }} <a href="{{ route('imports.create') }}">{{ __('Upload a Shiplog file') }}</a></p>
+                @endcan
             @endif
         </x-card>
     @else
