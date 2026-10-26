@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "mohamadsyukri/laravel-template",
+    "name": "mohamadsyukri/shiplog",
     "type": "project",
-    "description": "Laravel 13 starter: Bootstrap 5 admin layout, route-name permissions with role-based menus, user and role screens, audit trail, Excel/PDF export and a reference CRUD module.",
-    "keywords": ["laravel", "starter", "template", "bootstrap", "livewire"],
+    "description": "A self-hosted work diary that writes itself from your git commits and Claude Code sessions.",
+    "keywords": ["laravel", "work-log", "diary", "claude-code", "self-hosted"],
     "license": "MIT",
     "require": {
         "php": "^8.4",

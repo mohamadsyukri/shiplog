@@ -54,12 +54,20 @@ it('opens the dashboard and profile to any signed-in user', function (): void {
 it('shows only the sidebar items the user may open', function (): void {
     $this->actingAs(userWithPermissions('announcements.index'))
         ->get(route('dashboard'))
-        ->assertSee('Pengumuman')
-        ->assertDontSee('Pentadbiran')
-        ->assertDontSee('Jejak Audit');
+        ->assertSee('Announcements')
+        ->assertDontSee('Administration')
+        ->assertDontSee('Audit Trail');
 
     $this->actingAs(superAdmin())
         ->get(route('dashboard'))
-        ->assertSee('Pentadbiran')
-        ->assertSee('Jejak Audit');
+        ->assertSee('Administration')
+        ->assertSee('Audit Trail');
+});
+
+// The labels are seeded text, not __() keys, so dropping lang/ms alone would have left them Malay.
+it('labels the sidebar in English', function (): void {
+    $this->actingAs(superAdmin())
+        ->get(route('dashboard'))
+        ->assertSeeInOrder(['Dashboard', 'Announcements', 'Administration', 'Users', 'Roles', 'Audit Trail'])
+        ->assertDontSee(['Papan Pemuka', 'Pengumuman', 'Pentadbiran', 'Pengguna', 'Peranan', 'Jejak Audit']);
 });

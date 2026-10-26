@@ -1,8 +1,9 @@
-# Laravel Template
+# Shiplog
 
-Starter app for admin systems. Personal coding style comes from the `coding-style` skill
-([claude-style-kit](https://github.com/mohamadsyukri/claude-style-kit)); this file holds only what
-this codebase knows. When the template becomes a real project, rename it here and in `.env`.
+A self-hosted work diary that writes itself from your git commits and Claude Code sessions. Started
+from [laravel-template](https://github.com/mohamadsyukri/laravel-template). Personal coding style
+comes from the `coding-style` skill ([claude-style-kit](https://github.com/mohamadsyukri/claude-style-kit));
+this file holds only what this codebase knows.
 
 ## Stack
 - Laravel 13 (streamlined structure: `bootstrap/app.php`), PHP 8.4, Pest 5, Pint (Laravel preset)
@@ -10,42 +11,47 @@ this codebase knows. When the template becomes a real project, rename it here an
   only for tabs with real per-row state
 - Fortify (sign in, password reset and change — no self-registration), spatie/laravel-permission 8,
   spatie/laravel-activitylog 5, maatwebsite/excel 4, barryvdh/laravel-snappy (wkhtmltopdf)
+- SQLite by default, with cache, sessions and queue in the database — no Redis needed. MySQL works
+  through `.env`.
 
 ## Running things (with [docker-webstack](https://github.com/mohamadsyukri/docker-webstack))
-- PHP: `docker exec -e XDEBUG_MODE=off -w /var/www/projects/<path> php84 php artisan …`
-- Site: `bin/new-site.sh <name> <path> php84` in the webstack, then http://<name>.local
+- PHP: `docker exec -e XDEBUG_MODE=off -w /var/www/projects/me/shiplog php84 php artisan …`
+- Site: http://shiplog.local (`bin/new-site.sh shiplog me/shiplog php84` in the webstack)
 - First run: `composer setup` (install, key, migrate, seed, npm build) — a human runs this.
+- Front-end: `bin/node.sh me/shiplog npm run build` from the webstack. Build before running tests:
+  without `public/build/manifest.json` every page test fails on "Vite manifest not found".
 - Tests: `php artisan test --compact` — sqlite in memory, never a real database.
-- Browser: `bin/playwright.sh <path>` from the webstack (e2e/ specs, Playwright 1.62).
+- Browser: `bin/playwright.sh me/shiplog` from the webstack (e2e/ specs, Playwright 1.62).
 
 ## How the app is wired
 - **Access:** every named route inside the `route.permission` group (routes/web.php) is a
   permission — config/access.php, App\Http\Middleware\AuthorizeRoute. Supporting routes fold into
   their screen: datatable/export/pdf → index, store → create, update → edit. A new route is closed
-  until `php artisan permissions:sync` registers it and a role is granted it on Pentadbiran >
-  Peranan. The `Pentadbir Sistem` role passes every check. Livewire actions skip route middleware,
-  so they check the permission themselves (see RecipientsTab::save).
+  until `php artisan permissions:sync` registers it and a role is granted it on Administration >
+  Roles. The `System Administrator` role passes every check. Livewire actions skip route
+  middleware, so they check the permission themselves (see RecipientsTab::save).
 - **Sidebar:** the `menus` table (MenuSeeder), each item shown only when the user may open its
   route (App\Support\Menu\Sidebar).
-- **Reference module — Pengumuman** (`announcements.*`): copy its shape for new features.
+- **Reference module — Announcements** (`announcements.*`): copy its shape for new features.
   Thin controller → `final readonly` service → Form Requests; `index` = yajra listing with filters
   and Excel/PDF export from one query; `show` = view only; `create`/`edit` share `_form/`;
-  SIMPAN/TERBIT through `form_action` + `match()`; published records are frozen; one Livewire tab.
+  Save/Publish through `form_action` + `match()`; published records are frozen; one Livewire tab.
 - **UI:** components in resources/views/components (`card`, `button`, `table`, `form.*`,
   `status-badge`, `breadcrumb`); the one confirm modal via `data-confirm` (plus
   `data-confirm-livewire="method"`); toasts from `session('success'|'error')` or
   `$this->dispatch('toast', message: …)`.
-- **Strings:** English keys in `__()`, Malay in lang/ms.json; validation, auth and DataTables
-  wording in lang/ms/*.php.
+- **Strings:** English only. Screen text is written in `__()` as the English sentence itself;
+  validation, auth and DataTables wording come from Laravel's and DataTables' own English. There is
+  no lang/ folder (the template's Malay was removed when it became Shiplog).
 - **Audit:** models opt in with `LogsActivity` + `getActivitylogOptions()` (logOnly, never secrets);
-  Pentadbiran > Jejak Audit shows before/after values.
+  Administration > Audit Trail shows before/after values.
 
 ## Adding a feature
 1. Migration (schema only) + model + factory
 2. Service + Form Requests + controller in app/Http/Controllers/<Area>/
 3. routes/modules/<area>.php, required inside the protected group in routes/web.php
 4. Views in resources/views/modules/<area>/ — index, show, create, edit, `_form/`, `_partials/`
-5. `php artisan permissions:sync`, a MenuSeeder row, translations in lang/ms.json
+5. `php artisan permissions:sync` and a MenuSeeder row
 6. Pest tests in tests/Feature/<Area>/: access gate → 404 → happy save → validation →
    transitions → child rows → delete rules → links
 
@@ -54,3 +60,6 @@ this codebase knows. When the template becomes a real project, rename it here an
 - Date-only columns cast to `date:Y-m-d`; screens show d/m/Y.
 - Seeders are idempotent (DatabaseSeeder is safe to re-run); data never goes in migrations.
 - Users are deactivated, never deleted, so the audit trail always has its causer.
+- `package-lock.json` is committed, so `npm ci` rebuilds the front end that was tested. This is a
+  deliberate exception to the style kit's never-stage rule: a solo public app has no lock-file
+  merge conflicts to avoid.

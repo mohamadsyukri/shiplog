@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Role;
 
 final class RoleSeeder extends Seeder
 {
-    public const string USER_ROLE = 'Pengguna';
+    public const string USER_ROLE = 'User';
 
     public function run(): void
     {

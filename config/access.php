@@ -9,7 +9,7 @@ declare(strict_types=1);
 return [
 
     // This role passes every permission check (Gate::before in AppServiceProvider).
-    'super_admin_role' => 'Pentadbir Sistem',
+    'super_admin_role' => 'System Administrator',
 
     // Routes any signed-in user may open without a permission (Str::is patterns).
     'open_routes' => [
@@ -39,7 +39,7 @@ return [
     // The first administrator, created by AdminUserSeeder. An empty password gets a random one,
     // printed once by the seeder.
     'admin' => [
-        'name' => env('ADMIN_NAME', 'Pentadbir Sistem'),
+        'name' => env('ADMIN_NAME', 'System Administrator'),
         'email' => env('ADMIN_EMAIL', 'admin@example.com'),
         'password' => env('ADMIN_PASSWORD'),
     ],

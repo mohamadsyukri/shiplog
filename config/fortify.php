@@ -159,7 +159,7 @@ return [
     |
     */
 
-    // Administrators create users (Pentadbiran > Pengguna), so there is no self-registration.
+    // Administrators create users (Administration > Users), so there is no self-registration.
     // Two-factor and passkeys can be switched on per project; their migrations are not included.
     'features' => [
         Features::resetPasswords(),

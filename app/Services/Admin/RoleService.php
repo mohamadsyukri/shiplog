@@ -77,7 +77,7 @@ final readonly class RoleService
 
     /**
      * Permissions grouped the way users see the app: each group is titled with its sidebar label
-     * (`announcements` → "Pengumuman"), falling back to a readable form of the route prefix.
+     * (`announcements` → "Announcements"), falling back to a readable form of the route prefix.
      *
      * @return array<string, array{label: string, permissions: array<string, string>}>
      */

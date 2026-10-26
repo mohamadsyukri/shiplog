@@ -8,8 +8,8 @@ it('sends guests to the sign-in page', function (): void {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
 });
 
-it('shows the sign-in page in Malay', function (): void {
-    $this->get(route('login'))->assertOk()->assertSee('Log Masuk')->assertSee('Lupa kata laluan?');
+it('shows the sign-in page in English', function (): void {
+    $this->get(route('login'))->assertOk()->assertSee('Sign in')->assertSee('Forgot password?');
 });
 
 it('signs in an active user and opens the dashboard', function (): void {
@@ -25,7 +25,7 @@ it('rejects a wrong password with the generic message', function (): void {
     User::factory()->create(['email' => 'aminah@example.com']);
 
     $this->post(route('login'), ['email' => 'aminah@example.com', 'password' => 'wrong'])
-        ->assertSessionHasErrors(['email' => 'Maklumat log masuk tidak sepadan dengan rekod kami.']);
+        ->assertSessionHasErrors(['email' => 'These credentials do not match our records.']);
 
     $this->assertGuest();
 });
@@ -34,7 +34,7 @@ it('keeps an inactive user out, after checking the password', function (): void 
     User::factory()->inactive()->create(['email' => 'aminah@example.com']);
 
     $this->post(route('login'), ['email' => 'aminah@example.com', 'password' => 'password'])
-        ->assertSessionHasErrors(['email' => 'Akaun anda tidak aktif. Sila hubungi pentadbir sistem.']);
+        ->assertSessionHasErrors(['email' => 'Your account is inactive. Please contact the administrator.']);
 
     $this->assertGuest();
 });

@@ -39,5 +39,5 @@ it('shows the error on the profile form when the current password is wrong', fun
         ->put(route('user-password.update'), $form)
         ->assertOk()
         ->assertSee('is-invalid', false)
-        ->assertSee('Kata laluan yang diberi tidak sepadan dengan kata laluan semasa anda.');
+        ->assertSee('The provided password does not match your current password.');
 });

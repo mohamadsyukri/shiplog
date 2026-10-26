@@ -15,16 +15,16 @@ final class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->item(null, 'Papan Pemuka', 'bi-speedometer2', 'dashboard', 1);
-        $this->item(null, 'Pengumuman', 'bi-megaphone', 'announcements.index', 2);
+        $this->item(null, 'Dashboard', 'bi-speedometer2', 'dashboard', 1);
+        $this->item(null, 'Announcements', 'bi-megaphone', 'announcements.index', 2);
 
         $admin = Menu::query()->updateOrCreate(
-            ['parent_id' => null, 'route_name' => null, 'label' => 'Pentadbiran'],
+            ['parent_id' => null, 'route_name' => null, 'label' => 'Administration'],
             ['icon' => 'bi-gear', 'sort' => 9],
         );
-        $this->item($admin->id, 'Pengguna', 'bi-people', 'admin.users.index', 1);
-        $this->item($admin->id, 'Peranan', 'bi-shield-lock', 'admin.roles.index', 2);
-        $this->item($admin->id, 'Jejak Audit', 'bi-clock-history', 'admin.audit-trail.index', 3);
+        $this->item($admin->id, 'Users', 'bi-people', 'admin.users.index', 1);
+        $this->item($admin->id, 'Roles', 'bi-shield-lock', 'admin.roles.index', 2);
+        $this->item($admin->id, 'Audit Trail', 'bi-clock-history', 'admin.audit-trail.index', 3);
     }
 
     private function item(?int $parentId, string $label, string $icon, string $routeName, int $sort): void

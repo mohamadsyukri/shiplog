@@ -9,12 +9,12 @@ beforeEach(function (): void {
 });
 
 it('lists users with their roles', function (): void {
-    User::factory()->create(['name' => 'Siti Aminah'])->assignRole('Pengguna');
+    User::factory()->create(['name' => 'Siti Aminah'])->assignRole('User');
 
     $this->actingAs($this->admin)
         ->getJson(route('admin.users.datatable', ['draw' => 1]))
         ->assertOk()
-        ->assertJsonFragment(['name' => 'Siti Aminah', 'roles' => 'Pengguna']);
+        ->assertJsonFragment(['name' => 'Siti Aminah', 'roles' => 'User']);
 });
 
 it('creates a user with roles', function (): void {
@@ -23,12 +23,12 @@ it('creates a user with roles', function (): void {
         'email' => 'Siti@Example.com',
         'password' => 'rahsia-baharu-123',
         'password_confirmation' => 'rahsia-baharu-123',
-        'roles' => ['Pengguna'],
+        'roles' => ['User'],
         'is_active' => '1',
     ])->assertRedirect(route('admin.users.index'));
 
     $user = User::query()->where('email', 'siti@example.com')->sole();
-    expect($user->hasRole('Pengguna'))->toBeTrue()
+    expect($user->hasRole('User'))->toBeTrue()
         ->and($user->is_active)->toBeTrue()
         ->and(Hash::check('rahsia-baharu-123', $user->password))->toBeTrue();
 });
@@ -54,7 +54,7 @@ it('keeps the current password when the field is left blank', function (): void 
         'email' => $user->email,
         'password' => '',
         'password_confirmation' => '',
-        'roles' => ['Pengguna'],
+        'roles' => ['User'],
         'is_active' => '0',
     ])->assertRedirect(route('admin.users.index'));
 
@@ -68,7 +68,7 @@ it('stops an administrator from locking themselves out', function (): void {
     $this->actingAs($this->admin)->put(route('admin.users.update', $this->admin), [
         'name' => $this->admin->name,
         'email' => $this->admin->email,
-        'roles' => ['Pengguna'],
+        'roles' => ['User'],
         'is_active' => '0',
     ])->assertSessionHasErrors(['is_active', 'roles']);
 

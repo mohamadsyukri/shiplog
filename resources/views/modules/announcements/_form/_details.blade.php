@@ -1,4 +1,4 @@
-{{-- Shared by create and edit. SIMPAN keeps a draft; TERBIT publishes and freezes it. --}}
+{{-- Shared by create and edit. Save keeps a draft; Publish publishes and freezes it. --}}
 <x-card :title="__('Announcement details')">
     <x-form.input name="title" :label="__('Title')" :value="$announcement->title" maxlength="200" required />
     <x-form.textarea name="body" :label="__('Content')" :value="$announcement->body" rows="6" required />

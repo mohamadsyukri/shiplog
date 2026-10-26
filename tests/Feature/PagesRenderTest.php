@@ -28,7 +28,7 @@ it('renders every screen', function (string $routeName, Closure $parameters): vo
     'user edit' => ['admin.users.edit', fn (): array => [User::factory()->create()]],
     'role list' => ['admin.roles.index', fn (): array => []],
     'role add' => ['admin.roles.create', fn (): array => []],
-    'role edit' => ['admin.roles.edit', fn (): array => [Role::findByName('Pengguna', 'web')]],
+    'role edit' => ['admin.roles.edit', fn (): array => [Role::findByName('User', 'web')]],
     'super-admin role edit' => ['admin.roles.edit', fn (): array => [Role::findByName(config('access.super_admin_role'), 'web')]],
     'audit list' => ['admin.audit-trail.index', fn (): array => []],
     'audit view' => ['admin.audit-trail.show', fn (): array => [Activity::query()->latest('id')->firstOrFail()]],

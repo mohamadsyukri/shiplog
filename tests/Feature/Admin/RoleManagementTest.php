@@ -12,24 +12,24 @@ it('groups permissions under their sidebar labels', function (): void {
     $this->actingAs($this->admin)
         ->get(route('admin.roles.create'))
         ->assertOk()
-        ->assertSee('Pengumuman')
-        ->assertSee('Senarai')
-        ->assertSee('Kemaskini');
+        ->assertSee('Announcements')
+        ->assertSee('List')
+        ->assertSee('Edit');
 });
 
 it('creates a role with the ticked permissions', function (): void {
     $this->actingAs($this->admin)->post(route('admin.roles.store'), [
-        'name' => 'Penyedia Pengumuman',
+        'name' => 'Announcement Writer',
         'permissions' => ['announcements.index', 'announcements.create'],
     ])->assertRedirect(route('admin.roles.index'));
 
-    $role = Role::findByName('Penyedia Pengumuman', 'web');
+    $role = Role::findByName('Announcement Writer', 'web');
     expect($role->permissions->pluck('name')->sort()->values()->all())->toBe(['announcements.create', 'announcements.index']);
 });
 
 it('rejects a permission that does not exist', function (): void {
     $this->actingAs($this->admin)->post(route('admin.roles.store'), [
-        'name' => 'Peranan Pelik',
+        'name' => 'Odd Role',
         'permissions' => ['reports.nuke'],
     ])->assertSessionHasErrors('permissions.0');
 });
@@ -37,12 +37,12 @@ it('rejects a permission that does not exist', function (): void {
 it('keeps the super-admin role name fixed', function (): void {
     $superAdmin = Role::findByName(config('access.super_admin_role'), 'web');
 
-    $this->actingAs($this->admin)->put(route('admin.roles.update', $superAdmin), ['name' => 'Bos'])
+    $this->actingAs($this->admin)->put(route('admin.roles.update', $superAdmin), ['name' => 'Boss'])
         ->assertSessionHasErrors('name');
 });
 
 it('refuses to delete a role that still has users, or the super-admin role', function (): void {
-    $role = Role::findByName('Pengguna', 'web');
+    $role = Role::findByName('User', 'web');
     User::factory()->create()->assignRole($role);
     $superAdmin = Role::findByName(config('access.super_admin_role'), 'web');
 

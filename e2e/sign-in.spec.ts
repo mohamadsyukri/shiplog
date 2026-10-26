@@ -5,10 +5,10 @@ import { expect, test } from '@playwright/test';
  * The sign-in case needs the first administrator's details:
  *   PLAYWRIGHT_ADMIN_EMAIL=... PLAYWRIGHT_ADMIN_PASSWORD=... bin/playwright.sh <path>
  */
-test('the sign-in page loads in Malay', async ({ page }) => {
+test('the sign-in page loads in English', async ({ page }) => {
     await page.goto('/login');
 
-    await expect(page.getByRole('button', { name: 'Log Masuk' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
 });
 
 test('the administrator signs in and sees the admin menu', async ({ page }) => {
@@ -17,10 +17,10 @@ test('the administrator signs in and sees the admin menu', async ({ page }) => {
     test.skip(!email || !password, 'Set PLAYWRIGHT_ADMIN_EMAIL and PLAYWRIGHT_ADMIN_PASSWORD to run this case.');
 
     await page.goto('/login');
-    await page.getByLabel('E-mel').fill(email!);
-    await page.getByLabel('Kata laluan').fill(password!);
-    await page.getByRole('button', { name: 'Log Masuk' }).click();
+    await page.getByLabel('Email').fill(email!);
+    await page.getByLabel('Password').fill(password!);
+    await page.getByRole('button', { name: 'Sign in' }).click();
 
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.locator('#app-sidebar')).toContainText('Pentadbiran');
+    await expect(page.locator('#app-sidebar')).toContainText('Administration');
 });

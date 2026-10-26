@@ -47,7 +47,7 @@ it('saves a draft, records the author and returns to the form', function (): voi
     $response = $this->actingAs($this->editor)->post(route('announcements.store'), announcementForm());
 
     $announcement = Announcement::query()->sole();
-    $response->assertRedirect(route('announcements.edit', $announcement))->assertSessionHas('success', 'Pengumuman telah disimpan.');
+    $response->assertRedirect(route('announcements.edit', $announcement))->assertSessionHas('success', 'Announcement saved.');
 
     expect($announcement->status)->toBe(AnnouncementStatus::Draft)
         ->and($announcement->starts_on->toDateString())->toBe('2026-11-01')
@@ -112,14 +112,14 @@ it('shows the Add button only to users who may create', function (): void {
 });
 
 it('feeds the table with the filtered rows', function (): void {
-    Announcement::factory()->create(['title' => 'Draf A']);
-    Announcement::factory()->published()->create(['title' => 'Terbit B']);
+    Announcement::factory()->create(['title' => 'Draft A']);
+    Announcement::factory()->published()->create(['title' => 'Published B']);
 
     $this->actingAs($this->editor)
         ->getJson(route('announcements.datatable', ['draw' => 1, 'filter_status' => 'published']))
         ->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.title', 'Terbit B');
+        ->assertJsonPath('data.0.title', 'Published B');
 });
 
 it('exports the filtered rows to Excel', function (): void {
@@ -134,14 +134,14 @@ it('exports the filtered rows to Excel', function (): void {
 
 it('prints the filtered rows to PDF', function (): void {
     SnappyPdf::fake();
-    Announcement::factory()->create(['title' => 'Draf A']);
-    Announcement::factory()->published()->create(['title' => 'Terbit B']);
+    Announcement::factory()->create(['title' => 'Draft A']);
+    Announcement::factory()->published()->create(['title' => 'Published B']);
 
     $this->actingAs($this->editor)->get(route('announcements.pdf', ['filter_status' => 'published']))->assertOk();
 
     SnappyPdf::assertViewIs('modules.announcements.pdf');
-    SnappyPdf::assertSee('Terbit B');
-    SnappyPdf::assertDontSee('Draf A');
+    SnappyPdf::assertSee('Published B');
+    SnappyPdf::assertDontSee('Draft A');
 });
 
 it('records each change in the audit trail with the old and new values', function (): void {
@@ -159,7 +159,7 @@ it('lists only published announcements on the dashboard', function (): void {
     Announcement::factory()->create(['title' => 'Masih draf']);
     Announcement::factory()->published()->create(['title' => 'Sudah terbit']);
 
-    $this->actingAs(User::factory()->create()->assignRole('Pengguna'))
+    $this->actingAs(User::factory()->create()->assignRole('User'))
         ->get(route('dashboard'))
         ->assertSee('Sudah terbit')
         ->assertDontSee('Masih draf');

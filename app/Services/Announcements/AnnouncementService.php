@@ -68,7 +68,7 @@ final readonly class AnnouncementService
     }
 
     /**
-     * SIMPAN keeps a draft; TERBIT publishes it, which also freezes it (AnnouncementStatus::isEditable).
+     * Save keeps a draft; Publish publishes it, which also freezes it (AnnouncementStatus::isEditable).
      *
      * @return array{status: AnnouncementStatus, published_at?: Carbon}
      */
