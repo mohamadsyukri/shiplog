@@ -1,79 +1,83 @@
-# Laravel Template
+# Shiplog
 
-A Laravel 13 starter for admin systems, so a new project starts with the plumbing done and
-features can be built from day one.
+A self-hosted work diary that writes itself from your git commits and Claude Code sessions.
 
-- **Bootstrap 5.3 admin layout** — sidebar, top bar, breadcrumbs, cards, form components, one
-  confirm dialog, toasts. Screens in Malay (English fallback); code in English.
-- **Sign in** with Fortify — password reset and change, inactive accounts blocked, no
-  self-registration.
-- **Access by route name** — every screen is a permission, granted to roles; the sidebar shows only
-  what a user may open. One command registers new routes.
-- **User and role screens** — create users, assign roles, tick permissions per screen.
-- **Audit trail** — who changed what, with before/after values.
-- **Excel and PDF export** — from the same query as the listing, with its filters.
-- **A reference CRUD module** ("Pengumuman") showing every convention in working, tested code:
-  yajra listing, view-only page, shared create/edit form, draft → publish, a Livewire tab.
+![The Shiplog board: days down, lanes across, one summary card per lane per day](docs/board.png)
 
-Laravel 13 · PHP 8.4 · Livewire 4 · Bootstrap 5.3 · yajra DataTables 13 · spatie/laravel-permission 8 ·
-spatie/laravel-activitylog 5 · Laravel Excel 4 · laravel-snappy · Pest 5
+A Claude Code skill reads what you committed and what you worked through with Claude, writes one
+short card per project ("lane") per day, and Shiplog shows them as a board: newest day first, each
+card opening to the commits and sessions behind it. You stop losing track of what you did last
+week, without keeping a log by hand.
 
-## Start a new project
+## What it does
 
-1. On GitHub, click **Use this template** (or clone it and delete `.git`).
-2. Put the project where your web server can serve it. With
-   [docker-webstack](https://github.com/mohamadsyukri/docker-webstack):
+- **A board of your days.** Days down, lanes across, a 2 to 4 line card per lane per day, and a
+  dash where a lane had no work. Thirty days with work per page.
+- **Cards built from records.** Each card lists its sources (commits, Claude Code sessions,
+  artifacts, notes), linked where they have an address.
+- **Your own lanes.** You name the lanes (a client, a product, "Personal") and the repositories that
+  feed each; they arrive with every import.
+- **Imports that never delete.** A file adds or replaces the cards for its days and leaves every
+  other day alone. A file with any problem is refused whole, with every problem listed.
+- **A public demo mode.** One setting turns a copy into a read-only board with invented data.
 
-       cd ~/docker-webstack/projects && git clone <your-new-repo> acme/myapp
-       ~/docker-webstack/bin/new-site.sh myapp acme/myapp php84
+## How it works
 
-3. Copy `.env.example` to `.env` and set `APP_NAME`, `APP_URL`, the database name, and
-   `ADMIN_EMAIL` / `ADMIN_PASSWORD` for the first administrator. Create the database.
-4. Install, migrate, seed and build:
+1. You ask Claude Code to "update my board".
+2. The `shiplog-update` skill reads your commits and sessions since the last update and writes a
+   `shiplog/v1` JSON file.
+3. `php artisan shiplog:import`, or the upload screen, checks the file and loads it.
+4. The board shows the new cards.
 
-       composer setup
+The file format is documented below, so any other tool can write Shiplog files too.
 
-   (with the webstack, run it inside the PHP container:
-   `docker exec -w /var/www/projects/acme/myapp php84 composer setup`)
-5. Sign in at http://myapp.local as the administrator. If `ADMIN_PASSWORD` was empty, the seeder
-   printed a random password — change it under Profil.
-6. Rename things: `APP_NAME`, the project name in `composer.json` and `CLAUDE.md`, and delete the
-   Pengumuman module once your first real module follows its shape.
+## Install
 
-## Add a feature
+You need PHP 8.4 with the `pdo_sqlite` extension, Composer and Node.js 22 or later. SQLite is the
+default, so there is no database server or Redis to run.
 
-1. Migration, model and factory.
-2. A `final readonly` service, Form Requests and a thin controller in `app/Http/Controllers/<Area>/`.
-3. Routes in `routes/modules/<area>.php`, required inside the protected group in `routes/web.php`.
-4. Views in `resources/views/modules/<area>/` — `index`, `show`, `create`, `edit`, `_form/`.
-5. `php artisan permissions:sync`, a row in `MenuSeeder`, Malay text in `lang/ms.json`.
-6. Pest tests in `tests/Feature/<Area>/`.
+```bash
+git clone https://github.com/mohamadsyukri/shiplog.git
+cd shiplog
+composer setup
+```
 
-The Pengumuman module (`app/Http/Controllers/Announcements`, `app/Services/Announcements`,
-`resources/views/modules/announcements`, `tests/Feature/Announcements`) is the example for each step.
+`composer setup` installs the PHP and JavaScript packages, creates `.env` and the SQLite database
+(`database/database.sqlite`), adds the first administrator and builds the front end. The
+administrator's password is printed once. To choose it instead, copy `.env.example` to `.env` and
+set `ADMIN_EMAIL` and `ADMIN_PASSWORD` before running `composer setup`.
 
-## How access works
+Serve `public/` with your web server, or run `php artisan serve` and open http://localhost:8000.
+For MySQL, set `DB_CONNECTION=mysql` and the `DB_*` lines in `.env` first.
 
-Every named route inside the `route.permission` middleware group is a permission with the same
-name. Supporting routes share their screen's permission — `datatable`, `export` and `pdf` use
-`index`; `store` uses `create`; `update` uses `edit` — so a listing never breaks because its data
-feed wasn't granted. Settings live in `config/access.php`.
+## Update your board with Claude Code
 
-    php artisan permissions:sync          # register permissions for new routes
-    php artisan permissions:sync --prune  # also delete permissions whose route is gone
+1. Copy the skill into Claude Code: `cp -r skill/shiplog-update ~/.claude/skills/`
+2. Create your settings from the example:
 
-Grant them on **Pentadbiran → Peranan**. The `Pentadbir Sistem` role passes every check. Sidebar
-items come from the `menus` table and appear only for users who may open them.
+   ```bash
+   mkdir -p ~/.config/shiplog
+   cp skill/shiplog-update/config.example.json ~/.config/shiplog/config.json
+   ```
 
-## Commands
+   Then edit it: your timezone, the email addresses you commit with, where to write files
+   (`storage/app/shiplog` in your copy is git-ignored), how to import them, and your lanes with the
+   repository folders that feed each.
+3. In any Claude Code session, say **"update my board"**.
 
-| Do | Command |
-|---|---|
-| Run the tests | `php artisan test --compact` (sqlite in memory) |
-| Format PHP | `vendor/bin/pint` |
-| Build assets | `npm run build` (or `npm run dev` while working) |
-| Browser smoke test | `npx playwright test`, or `bin/playwright.sh <path>` from the webstack |
-| Re-seed reference data | `php artisan db:seed` (idempotent — safe to re-run) |
+The first run goes back to your earliest commit, one file per month. Claude Code deletes session
+transcripts after 30 days unless you raise `cleanupPeriodDays` in `~/.claude/settings.json`, so
+older days are built from commits alone.
+
+## Import a file yourself
+
+```bash
+php artisan shiplog:import storage/app/shiplog/shiplog-2026-10-20_to_2026-10-21.json --dry-run   # check only
+php artisan shiplog:import storage/app/shiplog/shiplog-2026-10-20_to_2026-10-21.json             # import
+```
+
+Or upload it on **Imports > Upload** (2 MB at most); every import is listed in the history there.
+The System Administrator may upload; grant Imports to other roles on **Administration > Roles**.
 
 ## Import file format
 
@@ -122,6 +126,34 @@ importer accepts (`shiplog/v1`):
   `null`.
 - A file with any problem is refused whole, with one message per problem, and nothing is written.
 
+## Demo mode
+
+`DEMO_MODE=true` turns a copy into a public, read-only board: only the board is served, to anyone,
+and there is no sign-in, upload or admin page to write through. Set `SESSION_DRIVER=file` as well,
+so visitors leave no rows behind, then fill it with invented data:
+
+```bash
+php artisan migrate
+php artisan db:seed --class=DemoSeeder
+```
+
+`DemoSeeder` writes four lanes and 108 cards from 1 July to 28 September 2026, the same on every
+run. It refuses to run without demo mode, so it can never reach a real diary.
+
+## Development
+
+| Do | Command |
+|---|---|
+| Run the tests | `npm run build` once, then `php artisan test --compact` (SQLite in memory) |
+| Format PHP | `vendor/bin/pint` |
+| Browser checks | `PLAYWRIGHT_BASE_URL=… PLAYWRIGHT_ADMIN_EMAIL=… PLAYWRIGHT_ADMIN_PASSWORD=… npx playwright test` |
+
+The browser checks run against a real site, and the upload check imports the README example into
+its database.
+
+Shiplog started from [laravel-template](https://github.com/mohamadsyukri/laravel-template): Laravel
+13, Fortify, spatie/laravel-permission, spatie/laravel-activitylog, Bootstrap 5.3 and Pest.
+
 ## License
 
-MIT
+MIT, see [LICENSE](LICENSE).

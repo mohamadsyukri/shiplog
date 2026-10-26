@@ -35,6 +35,14 @@ this file holds only what this codebase knows.
   `index` = paginated history; `create` = the form; `store` redirects with a toast, or back to the
   form with every problem listed. The board (`board.index`) is the read-only pattern: a service
   builds a result object (BoardService → BoardPage) for the view.
+- **Import format `shiplog/v1`:** checked only by ImportService, which the `shiplog:import`
+  command and the upload screen share. The README's example is tests/Fixtures/shiplog-example.json;
+  ImportServiceTest keeps the two equal, so change both together.
+- **Demo mode:** `DEMO_MODE` (config/shiplog.php) registers only the board, open to anyone, and
+  drops Fortify's routes. DemoSeeder refuses to run outside it. Routes are fixed at boot, so
+  DemoModeTest boots the app again in demo mode.
+- **Skill:** skill/shiplog-update is the Claude Code skill that writes import files from commits
+  and sessions; ConfigExampleTest checks its example config against the importer's rules.
 - **UI:** components in resources/views/components (`card`, `button`, `table`, `form.*`,
   `breadcrumb`); the one confirm modal via `data-confirm`; toasts from
   `session('success'|'error')` or `window.toast(message, type)`.
@@ -56,6 +64,8 @@ this file holds only what this codebase knows.
 ## Rules specific to this codebase
 - `Model::shouldBeStrict()` is on outside production: eager-load, no unknown attributes.
 - Date-only columns cast to `date:Y-m-d`; screens show d/m/Y.
+- Card dates are written and looked up as Y-m-d strings, never Carbon: a Carbon is stored with a
+  time and then misses the board's and the importer's lookups.
 - Seeders are idempotent (DatabaseSeeder is safe to re-run); data never goes in migrations.
 - Users are deactivated, never deleted, so the audit trail always has its causer.
 - `package-lock.json` is committed, so `npm ci` rebuilds the front end that was tested. This is a
