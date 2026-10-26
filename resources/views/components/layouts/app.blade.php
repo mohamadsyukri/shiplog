@@ -15,10 +15,21 @@
 </head>
 <body>
     <div class="d-lg-flex">
-        @include('layouts._sidebar')
+        {{-- The sidebar is built for a signed-in user; a demo visitor has none (config/shiplog.php). --}}
+        @auth
+            @include('layouts._sidebar')
+        @endauth
 
         <div class="app-main flex-grow-1">
             @include('layouts._topbar')
+
+            @if (config('shiplog.demo'))
+                <div class="alert alert-info border-0 border-bottom rounded-0 mb-0 small" role="note">
+                    <strong>{{ __('Demo — made-up data.') }}</strong>
+                    {{ __('Shiplog is open source:') }}
+                    <a href="{{ config('shiplog.repository_url') }}">{{ config('shiplog.repository_url') }}</a>
+                </div>
+            @endif
 
             <main class="container-fluid py-4">
                 @if ($title || $breadcrumbs)

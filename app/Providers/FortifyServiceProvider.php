@@ -20,7 +20,10 @@ class FortifyServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // A demo has no sign-in at all: /login and the rest answer 404 (config/shiplog.php).
+        if (config('shiplog.demo')) {
+            Fortify::ignoreRoutes();
+        }
     }
 
     public function boot(): void

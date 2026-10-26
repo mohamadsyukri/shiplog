@@ -3,6 +3,14 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+// Demo mode (config/shiplog.php): the board alone, open to anyone. No other route exists, so nothing
+// can be signed into or written; FortifyServiceProvider drops the sign-in routes too.
+if (config('shiplog.demo')) {
+    require __DIR__.'/modules/board.php';
+
+    return;
+}
+
 // Sign in, sign out and password reset come from Fortify (config/fortify.php).
 
 // Every named route in here is also a permission (config/access.php, `php artisan permissions:sync`).
