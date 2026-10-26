@@ -7,10 +7,9 @@ this file holds only what this codebase knows.
 
 ## Stack
 - Laravel 13 (streamlined structure: `bootstrap/app.php`), PHP 8.4, Pest 5, Pint (Laravel preset)
-- Blade + Bootstrap 5.3 + vanilla JS/jQuery; yajra DataTables for listings; Select2; Livewire 4
-  only for tabs with real per-row state
+- Blade + Bootstrap 5.3 + vanilla JS/jQuery; yajra DataTables for the admin listings; Select2
 - Fortify (sign in, password reset and change — no self-registration), spatie/laravel-permission 8,
-  spatie/laravel-activitylog 5, maatwebsite/excel 4, barryvdh/laravel-snappy (wkhtmltopdf)
+  spatie/laravel-activitylog 5
 - SQLite by default, with cache, sessions and queue in the database — no Redis needed. MySQL works
   through `.env`.
 
@@ -28,8 +27,7 @@ this file holds only what this codebase knows.
   permission — config/access.php, App\Http\Middleware\AuthorizeRoute. Supporting routes fold into
   their screen: datatable/export/pdf → index, store → create, update → edit. A new route is closed
   until `php artisan permissions:sync` registers it and a role is granted it on Administration >
-  Roles. The `System Administrator` role passes every check. Livewire actions skip route
-  middleware, so a Livewire component must check the permission itself.
+  Roles. The `System Administrator` role passes every check.
 - **Sidebar:** the `menus` table (MenuSeeder), each item shown only when the user may open its
   route (App\Support\Menu\Sidebar).
 - **Reference module — Imports** (`imports.*`): copy its shape for new features. Thin
@@ -38,9 +36,8 @@ this file holds only what this codebase knows.
   form with every problem listed. The board (`board.index`) is the read-only pattern: a service
   builds a result object (BoardService → BoardPage) for the view.
 - **UI:** components in resources/views/components (`card`, `button`, `table`, `form.*`,
-  `breadcrumb`); the one confirm modal via `data-confirm` (plus
-  `data-confirm-livewire="method"`); toasts from `session('success'|'error')` or
-  `$this->dispatch('toast', message: …)`.
+  `breadcrumb`); the one confirm modal via `data-confirm`; toasts from
+  `session('success'|'error')` or `window.toast(message, type)`.
 - **Strings:** English only. Screen text is written in `__()` as the English sentence itself;
   validation, auth and DataTables wording come from Laravel's and DataTables' own English. There is
   no lang/ folder (the template's Malay was removed when it became Shiplog).

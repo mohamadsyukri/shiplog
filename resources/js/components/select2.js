@@ -2,8 +2,7 @@
  * Select2 on every <select class="js-select2">.
  *
  * Select2 only fires jQuery events, which never reach addEventListener — so code listening the
- * normal way (or wire:model) never hears the change. Re-emit a native 'change' after each pick.
- * Inside a Livewire component, wrap the select in wire:ignore so a re-render doesn't wipe Select2.
+ * normal way never hears the change. Re-emit a native 'change' after each pick.
  */
 export function initSelect2(root = document) {
     window.$(root).find('select.js-select2').each(function () {

@@ -2,7 +2,6 @@
  * The one confirm dialog (#confirm-modal, in the app layout). Never use window.confirm().
  *
  * Any element with data-confirm="Message" asks first, then:
- *  - with data-confirm-livewire="method": calls that method on the surrounding Livewire component;
  *  - a link: follows it;
  *  - otherwise: submits its form, keeping the pressed button's name/value (e.g. form_action).
  */
@@ -33,12 +32,6 @@ export function initConfirm() {
         modal.hide();
 
         if (!trigger) {
-            return;
-        }
-
-        if (trigger.dataset.confirmLivewire) {
-            const root = trigger.closest('[wire\\:id]');
-            window.Livewire.find(root.getAttribute('wire:id')).call(trigger.dataset.confirmLivewire);
             return;
         }
 

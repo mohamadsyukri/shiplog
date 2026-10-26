@@ -1,5 +1,5 @@
 {{--
-    The screen card: list actions (Add, Print, Excel) go in the actions slot, right-aligned in the
+    The screen card: list actions (Add, Upload) go in the actions slot, right-aligned in the
     header; the save button goes in the footer slot — one per tab. No Back button inside cards.
 --}}
 @props(['title' => null])

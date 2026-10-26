@@ -11,7 +11,6 @@
     <title>{{ $title ? $title.' · ' : '' }}{{ config('app.name') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
-    @livewireStyles
 </head>
 <body>
     <div class="d-lg-flex">
@@ -53,6 +52,5 @@
     <script>
         window.dataTableLanguage = @json(is_array($dataTableLanguage) ? $dataTableLanguage : []);
     </script>
-    @livewireScripts
 </body>
 </html>

@@ -1,4 +1,4 @@
-{{-- The browser's own date picker (no plugin to clash with Livewire). Value is Y-m-d. --}}
+{{-- The browser's own date picker, no plugin. Value is Y-m-d. --}}
 @props([
     'name',
     'label' => null,
