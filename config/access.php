@@ -13,7 +13,7 @@ return [
 
     // Routes any signed-in user may open without a permission (Str::is patterns).
     'open_routes' => [
-        'dashboard',
+        'board.index',
         'profile.*',
     ],
 

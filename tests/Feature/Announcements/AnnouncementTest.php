@@ -3,7 +3,6 @@
 use App\Enums\AnnouncementStatus;
 use App\Exports\AnnouncementsExport;
 use App\Models\Announcement;
-use App\Models\User;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
@@ -153,14 +152,4 @@ it('records each change in the audit trail with the old and new values', functio
     expect($activity->causer_id)->toBe($this->editor->id)
         ->and($activity->attribute_changes['old']['title'])->toBe('Lama')
         ->and($activity->attribute_changes['attributes']['title'])->toBe('Baharu');
-});
-
-it('lists only published announcements on the dashboard', function (): void {
-    Announcement::factory()->create(['title' => 'Masih draf']);
-    Announcement::factory()->published()->create(['title' => 'Sudah terbit']);
-
-    $this->actingAs(User::factory()->create()->assignRole('User'))
-        ->get(route('dashboard'))
-        ->assertSee('Sudah terbit')
-        ->assertDontSee('Masih draf');
 });

@@ -15,7 +15,7 @@ final class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->item(null, 'Dashboard', 'bi-speedometer2', 'dashboard', 1);
+        $this->item(null, 'Board', 'bi-kanban', 'board.index', 1);
         $this->item(null, 'Announcements', 'bi-megaphone', 'announcements.index', 2);
 
         $admin = Menu::query()->updateOrCreate(

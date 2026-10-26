@@ -5,18 +5,18 @@ use App\Models\User;
 beforeEach(fn () => seedAccess());
 
 it('sends guests to the sign-in page', function (): void {
-    $this->get(route('dashboard'))->assertRedirect(route('login'));
+    $this->get(route('board.index'))->assertRedirect(route('login'));
 });
 
 it('shows the sign-in page in English', function (): void {
     $this->get(route('login'))->assertOk()->assertSee('Sign in')->assertSee('Forgot password?');
 });
 
-it('signs in an active user and opens the dashboard', function (): void {
+it('signs in an active user and opens the board', function (): void {
     $user = User::factory()->create(['email' => 'aminah@example.com']);
 
     $this->post(route('login'), ['email' => 'aminah@example.com', 'password' => 'password'])
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('board.index'));
 
     $this->assertAuthenticatedAs($user);
 });

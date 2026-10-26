@@ -13,7 +13,7 @@ it('creates one permission per screen action, folding supporting routes into the
         // datatable/export/pdf → index, store → create, update → edit (config/access.php aliases)
         ->not->toContain('announcements.datatable', 'announcements.export', 'announcements.store', 'announcements.update')
         // open to every signed-in user, so never a permission
-        ->not->toContain('dashboard', 'profile.edit');
+        ->not->toContain('board.index', 'profile.edit');
 });
 
 it('lists stale permissions and deletes them only with --prune', function (): void {
@@ -44,22 +44,22 @@ it('lets the super-admin role open everything', function (): void {
     $this->actingAs(superAdmin())->get(route('admin.users.index'))->assertOk();
 });
 
-it('opens the dashboard and profile to any signed-in user', function (): void {
+it('opens the board and profile to any signed-in user', function (): void {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get(route('dashboard'))->assertOk();
+    $this->actingAs($user)->get(route('board.index'))->assertOk();
     $this->actingAs($user)->get(route('profile.edit'))->assertOk();
 });
 
 it('shows only the sidebar items the user may open', function (): void {
     $this->actingAs(userWithPermissions('announcements.index'))
-        ->get(route('dashboard'))
+        ->get(route('board.index'))
         ->assertSee('Announcements')
         ->assertDontSee('Administration')
         ->assertDontSee('Audit Trail');
 
     $this->actingAs(superAdmin())
-        ->get(route('dashboard'))
+        ->get(route('board.index'))
         ->assertSee('Administration')
         ->assertSee('Audit Trail');
 });
@@ -67,7 +67,7 @@ it('shows only the sidebar items the user may open', function (): void {
 // The labels are seeded text, not __() keys, so dropping lang/ms alone would have left them Malay.
 it('labels the sidebar in English', function (): void {
     $this->actingAs(superAdmin())
-        ->get(route('dashboard'))
-        ->assertSeeInOrder(['Dashboard', 'Announcements', 'Administration', 'Users', 'Roles', 'Audit Trail'])
+        ->get(route('board.index'))
+        ->assertSeeInOrder(['Board', 'Announcements', 'Administration', 'Users', 'Roles', 'Audit Trail'])
         ->assertDontSee(['Papan Pemuka', 'Pengumuman', 'Pentadbiran', 'Pengguna', 'Peranan', 'Jejak Audit']);
 });

@@ -1,0 +1,78 @@
+/* The board: days down (newest first), lanes across. Below md each day's cards stack. */
+.board {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.board-row {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.board-head,
+.board-empty {
+    display: none;
+}
+
+.board-lane {
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    background-color: var(--bs-body-bg);
+    border-top: 3px solid var(--lane-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.board-date {
+    padding-top: 0.5rem;
+}
+
+.board-card {
+    border-left: 4px solid var(--lane-color);
+}
+
+/* The lane colour comes from the user's config and may be too light for text, so it marks a dot. */
+.board-card-lane::before {
+    content: '';
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-right: 0.4rem;
+    border-radius: 50%;
+    background-color: var(--lane-color);
+}
+
+/* Keeps the line breaks a summary was written with, without trusting it as HTML. */
+.board-summary {
+    white-space: pre-line;
+}
+
+.board-sources summary {
+    cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    /* Many lanes scroll sideways inside the board instead of widening the page. */
+    .board {
+        overflow-x: auto;
+    }
+
+    .board-row {
+        grid-template-columns: 7.5rem repeat(var(--board-lanes), minmax(13rem, 1fr));
+        align-items: start;
+    }
+
+    .board-head {
+        display: grid;
+    }
+
+    .board-empty {
+        display: block;
+        padding-top: 0.5rem;
+        text-align: center;
+        color: var(--bs-secondary-color);
+    }
+
+    .board-card-lane {
+        display: none;
+    }
+}

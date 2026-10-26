@@ -8,7 +8,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
     testDir: './e2e',
     use: {
-        baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://laravel-template.local',
+        baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://shiplog.local',
         trace: 'retain-on-failure',
     },
     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],

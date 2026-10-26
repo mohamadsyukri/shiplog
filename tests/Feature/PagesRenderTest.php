@@ -17,7 +17,7 @@ beforeEach(function (): void {
 it('renders every screen', function (string $routeName, Closure $parameters): void {
     $this->get(route($routeName, $parameters()))->assertOk();
 })->with([
-    'dashboard' => ['dashboard', fn (): array => []],
+    'board' => ['board.index', fn (): array => []],
     'profile' => ['profile.edit', fn (): array => []],
     'announcement list' => ['announcements.index', fn (): array => []],
     'announcement add' => ['announcements.create', fn (): array => []],
