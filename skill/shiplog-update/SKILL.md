@@ -19,11 +19,12 @@ paths.
 
 ## The update
 
-1. **Pick the days.** Find the newest `shiplog-<from>_to_<to>.json` in `output_dir` and start on its
+1. **Pick the days.** When the user names them ("the last two days", "September"), use exactly
+   those. Otherwise find the newest `shiplog-<from>_to_<to>.json` in `output_dir` and start on its
    `<to>` day: that day is done again on purpose, so work finished late still gets in, and
-   re-importing a day only replaces its cards. With no file yet, start at the earliest record (the
-   first commit by `git_emails` in any lane's `repos`, or the oldest transcript). End today, in
-   `timezone`.
+   re-importing a day only replaces its cards. With no file yet, the start is the earliest record
+   (the first commit by `git_emails` in any lane's `repos`, or the oldest transcript): tell the user
+   how many months that covers and wait for their go before starting. End today, in `timezone`.
 2. **Long ranges: one file per calendar month.** Months don't depend on each other. When you can
    start subagents, give each month to one, with this skill's path and the month's first and last
    day, and let each do steps 3 to 5.

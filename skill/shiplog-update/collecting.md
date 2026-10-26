@@ -28,8 +28,9 @@ where `<folder>` is the session's working directory with every `/` and `.` turne
 `MyApp2-0`.
 
 - **Lane:** turn each lane's `repos` folders into folder names the same way. A transcript folder
-  that equals one, or starts with one followed by `-` (a subfolder), belongs to that lane; any
-  other folder goes to `catch_all_lane`.
+  that equals one, or starts with one followed by `-` (a subfolder), belongs to that lane. When
+  several match, because one lane's repo sits inside another lane's folder (`~/work` in one lane,
+  `~/work/app` in another), the longest match wins. Any other folder goes to `catch_all_lane`.
 - **Lines:** each line is a JSON object. Read those whose `type` is `user` or `assistant`. Their
   `timestamp` is UTC (`...Z`); convert it to `timezone` for the day. `message.content` is a string
   or a list of blocks; read the `text` blocks and skip `tool_use` and `tool_result`.
