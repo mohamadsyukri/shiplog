@@ -48,7 +48,7 @@ it('serves no page but the board, so nothing can be signed into or written', fun
     'upload form' => ['GET', '/imports/create'],
     'upload' => ['POST', '/imports'],
     'users' => ['GET', '/admin/users'],
-    'announcements' => ['GET', '/announcements'],
+    'roles' => ['GET', '/admin/roles'],
 ]);
 
 it('shows the seeded demo up to its last day, a page at a time', function (): void {

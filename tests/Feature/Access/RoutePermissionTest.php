@@ -9,9 +9,9 @@ it('creates one permission per screen action, folding supporting routes into the
     $names = Permission::query()->pluck('name');
 
     expect($names)
-        ->toContain('announcements.index', 'announcements.create', 'announcements.edit', 'admin.users.index', 'imports.index', 'imports.create')
+        ->toContain('admin.users.index', 'admin.users.create', 'admin.users.edit', 'imports.index', 'imports.create')
         // datatable/export/pdf → index, store → create, update → edit (config/access.php aliases)
-        ->not->toContain('announcements.datatable', 'announcements.export', 'announcements.store', 'announcements.update', 'imports.store')
+        ->not->toContain('admin.users.datatable', 'admin.users.store', 'admin.users.update', 'imports.store')
         // open to every signed-in user, so never a permission
         ->not->toContain('board.index', 'profile.edit');
 });
@@ -28,16 +28,16 @@ it('lists stale permissions and deletes them only with --prune', function (): vo
 
 it('refuses a screen the user has no permission for', function (): void {
     $this->actingAs(User::factory()->create())
-        ->get(route('announcements.index'))
+        ->get(route('imports.index'))
         ->assertForbidden();
 });
 
 it('lets one permission open the screen and its data feed', function (): void {
-    $user = userWithPermissions('announcements.index');
+    $user = userWithPermissions('admin.users.index');
 
-    $this->actingAs($user)->get(route('announcements.index'))->assertOk();
-    $this->actingAs($user)->getJson(route('announcements.datatable'))->assertOk();
-    $this->actingAs($user)->get(route('announcements.create'))->assertForbidden();
+    $this->actingAs($user)->get(route('admin.users.index'))->assertOk();
+    $this->actingAs($user)->getJson(route('admin.users.datatable'))->assertOk();
+    $this->actingAs($user)->get(route('admin.users.create'))->assertForbidden();
 });
 
 it('lets the super-admin role open everything', function (): void {
@@ -52,9 +52,9 @@ it('opens the board and profile to any signed-in user', function (): void {
 });
 
 it('shows only the sidebar items the user may open', function (): void {
-    $this->actingAs(userWithPermissions('announcements.index'))
+    $this->actingAs(userWithPermissions('imports.index'))
         ->get(route('board.index'))
-        ->assertSee('Announcements')
+        ->assertSee('Imports')
         ->assertDontSee('Administration')
         ->assertDontSee('Audit Trail');
 
@@ -68,6 +68,6 @@ it('shows only the sidebar items the user may open', function (): void {
 it('labels the sidebar in English', function (): void {
     $this->actingAs(superAdmin())
         ->get(route('board.index'))
-        ->assertSeeInOrder(['Board', 'Announcements', 'Imports', 'Administration', 'Users', 'Roles', 'Audit Trail'])
+        ->assertSeeInOrder(['Board', 'Imports', 'Administration', 'Users', 'Roles', 'Audit Trail'])
         ->assertDontSee(['Papan Pemuka', 'Pengumuman', 'Pentadbiran', 'Pengguna', 'Peranan', 'Jejak Audit']);
 });

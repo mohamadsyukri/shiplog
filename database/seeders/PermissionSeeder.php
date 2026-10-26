@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
-use Spatie\Permission\Models\Role;
 
 final class PermissionSeeder extends Seeder
 {
@@ -15,10 +14,7 @@ final class PermissionSeeder extends Seeder
         // One permission per guarded route, straight from the route list (no hand-kept list to drift).
         Artisan::call('permissions:sync');
 
-        // Ordinary users can read announcements; anything more is granted on the role screen.
-        Role::findByName(RoleSeeder::USER_ROLE, 'web')->givePermissionTo([
-            'announcements.index',
-            'announcements.show',
-        ]);
+        // Nothing is granted to the User role: the board is open to every signed-in user, and the
+        // import history and upload are granted on Administration > Roles.
     }
 }

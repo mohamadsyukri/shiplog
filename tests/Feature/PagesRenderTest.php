@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Announcement;
 use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
@@ -21,10 +20,6 @@ it('renders every screen', function (string $routeName, Closure $parameters): vo
     'import history' => ['imports.index', fn (): array => []],
     'import upload' => ['imports.create', fn (): array => []],
     'profile' => ['profile.edit', fn (): array => []],
-    'announcement list' => ['announcements.index', fn (): array => []],
-    'announcement add' => ['announcements.create', fn (): array => []],
-    'announcement view' => ['announcements.show', fn (): array => [Announcement::factory()->hasRecipients(2)->create()]],
-    'announcement edit' => ['announcements.edit', fn (): array => [Announcement::factory()->create()]],
     'user list' => ['admin.users.index', fn (): array => []],
     'user add' => ['admin.users.create', fn (): array => []],
     'user edit' => ['admin.users.edit', fn (): array => [User::factory()->create()]],
@@ -37,7 +32,6 @@ it('renders every screen', function (string $routeName, Closure $parameters): vo
 ]);
 
 it('feeds every listing table', function (string $routeName): void {
-    Announcement::factory()->create();
 
     $this->getJson(route($routeName, ['draw' => 1]))->assertOk()->assertJsonStructure(['data', 'recordsTotal']);
-})->with(['announcements.datatable', 'admin.users.datatable', 'admin.roles.datatable', 'admin.audit-trail.datatable']);
+})->with(['admin.users.datatable', 'admin.roles.datatable', 'admin.audit-trail.datatable']);

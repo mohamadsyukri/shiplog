@@ -63,7 +63,7 @@ final readonly class Sidebar
      */
     private function item(Menu $menu, array $children): array
     {
-        // `announcements.index` stays highlighted on every announcements.* page (show, edit, ...).
+        // `admin.users.index` stays highlighted on every admin.users.* page (create, edit, ...).
         $section = $menu->route_name === null ? null : Str::beforeLast($menu->route_name, '.');
 
         return [

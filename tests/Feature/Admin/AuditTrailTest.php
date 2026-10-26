@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Announcement;
+use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
 
 beforeEach(function (): void {
@@ -10,7 +10,7 @@ beforeEach(function (): void {
 
 it('lists recorded changes with who made them', function (): void {
     $this->actingAs($this->admin);
-    Announcement::factory()->create();
+    User::factory()->create();
 
     $this->getJson(route('admin.audit-trail.datatable', ['draw' => 1]))
         ->assertOk()
@@ -19,14 +19,14 @@ it('lists recorded changes with who made them', function (): void {
 
 it('shows the values before and after a change', function (): void {
     $this->actingAs($this->admin);
-    $announcement = Announcement::factory()->create(['title' => 'Lama']);
-    $announcement->update(['title' => 'Baharu']);
+    $user = User::factory()->create(['name' => 'Aminah Old']);
+    $user->update(['name' => 'Aminah New']);
 
     $activity = Activity::query()->where('event', 'updated')->sole();
 
     $this->get(route('admin.audit-trail.show', $activity))
         ->assertOk()
-        ->assertSeeInOrder(['title', 'Lama', 'Baharu']);
+        ->assertSeeInOrder(['name', 'Aminah Old', 'Aminah New']);
 });
 
 it('never records password hashes', function (): void {

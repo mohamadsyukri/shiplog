@@ -29,15 +29,16 @@ this file holds only what this codebase knows.
   their screen: datatable/export/pdf → index, store → create, update → edit. A new route is closed
   until `php artisan permissions:sync` registers it and a role is granted it on Administration >
   Roles. The `System Administrator` role passes every check. Livewire actions skip route
-  middleware, so they check the permission themselves (see RecipientsTab::save).
+  middleware, so a Livewire component must check the permission itself.
 - **Sidebar:** the `menus` table (MenuSeeder), each item shown only when the user may open its
   route (App\Support\Menu\Sidebar).
-- **Reference module — Announcements** (`announcements.*`): copy its shape for new features.
-  Thin controller → `final readonly` service → Form Requests; `index` = yajra listing with filters
-  and Excel/PDF export from one query; `show` = view only; `create`/`edit` share `_form/`;
-  Save/Publish through `form_action` + `match()`; published records are frozen; one Livewire tab.
+- **Reference module — Imports** (`imports.*`): copy its shape for new features. Thin
+  controller → `final readonly` service (ImportService) → Form Request (StoreImportRequest);
+  `index` = paginated history; `create` = the form; `store` redirects with a toast, or back to the
+  form with every problem listed. The board (`board.index`) is the read-only pattern: a service
+  builds a result object (BoardService → BoardPage) for the view.
 - **UI:** components in resources/views/components (`card`, `button`, `table`, `form.*`,
-  `status-badge`, `breadcrumb`); the one confirm modal via `data-confirm` (plus
+  `breadcrumb`); the one confirm modal via `data-confirm` (plus
   `data-confirm-livewire="method"`); toasts from `session('success'|'error')` or
   `$this->dispatch('toast', message: …)`.
 - **Strings:** English only. Screen text is written in `__()` as the English sentence itself;

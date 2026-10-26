@@ -12,19 +12,19 @@ it('groups permissions under their sidebar labels', function (): void {
     $this->actingAs($this->admin)
         ->get(route('admin.roles.create'))
         ->assertOk()
-        ->assertSee('Announcements')
+        ->assertSee('Imports')
         ->assertSee('List')
         ->assertSee('Edit');
 });
 
 it('creates a role with the ticked permissions', function (): void {
     $this->actingAs($this->admin)->post(route('admin.roles.store'), [
-        'name' => 'Announcement Writer',
-        'permissions' => ['announcements.index', 'announcements.create'],
+        'name' => 'Uploader',
+        'permissions' => ['imports.index', 'imports.create'],
     ])->assertRedirect(route('admin.roles.index'));
 
-    $role = Role::findByName('Announcement Writer', 'web');
-    expect($role->permissions->pluck('name')->sort()->values()->all())->toBe(['announcements.create', 'announcements.index']);
+    $role = Role::findByName('Uploader', 'web');
+    expect($role->permissions->pluck('name')->sort()->values()->all())->toBe(['imports.create', 'imports.index']);
 });
 
 it('rejects a permission that does not exist', function (): void {

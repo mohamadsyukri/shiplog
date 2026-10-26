@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 final class PermissionName
 {
     /**
-     * `announcements.update` → `announcements.edit`; `admin.users.datatable` → `admin.users.index`.
+     * `admin.users.update` → `admin.users.edit`; `admin.users.datatable` → `admin.users.index`.
      */
     public static function forRoute(string $routeName): string
     {

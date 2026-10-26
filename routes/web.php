@@ -19,6 +19,5 @@ Route::middleware(['auth', 'route.permission'])->group(function (): void {
 
     require __DIR__.'/modules/board.php';
     require __DIR__.'/modules/imports.php';
-    require __DIR__.'/modules/announcements.php';
     require __DIR__.'/modules/admin.php';
 });
