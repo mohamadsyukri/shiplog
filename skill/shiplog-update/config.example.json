@@ -1,0 +1,15 @@
+{
+    "timezone": "Asia/Kuala_Lumpur",
+    "git_emails": ["you@example.com", "you@work.example"],
+    "output_dir": "~/shiplog/storage/app/shiplog",
+    "import": {
+        "mode": "command",
+        "command": "cd ~/shiplog && php artisan shiplog:import storage/app/shiplog/{name}"
+    },
+    "catch_all_lane": "other",
+    "lanes": [
+        { "key": "client-portal", "name": "Client portal", "color": "#2563eb", "order": 1, "repos": ["~/code/client-portal"] },
+        { "key": "side-project", "name": "Side project", "color": "#16a34a", "order": 2, "repos": ["~/code/side-project", "~/code/side-project-docs"] },
+        { "key": "other", "name": "Other", "color": "#6b7280", "order": 3, "repos": [] }
+    ]
+}
