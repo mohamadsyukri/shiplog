@@ -75,6 +75,53 @@ items come from the `menus` table and appear only for users who may open them.
 | Browser smoke test | `npx playwright test`, or `bin/playwright.sh <path>` from the webstack |
 | Re-seed reference data | `php artisan db:seed` (idempotent — safe to re-run) |
 
+## Import file format
+
+Shiplog reads one JSON file per update, written by the Claude Code skill or by any collector you
+write yourself. This example is the importer's test fixture, so it always matches what the
+importer accepts (`shiplog/v1`):
+
+```json
+{
+    "format": "shiplog/v1",
+    "range": { "from": "2026-10-20", "to": "2026-10-21" },
+    "lanes": [
+        { "key": "client-portal", "name": "Client portal", "color": "#2563eb", "order": 1 },
+        { "key": "side-project", "name": "Side project", "color": "#16a34a", "order": 2 },
+        { "key": "other", "name": "Other", "color": "#6b7280", "order": 3 }
+    ],
+    "entries": [
+        {
+            "date": "2026-10-20",
+            "lane": "client-portal",
+            "summary": "Fixed the invoice total that counted the delivery fee twice on split orders, with a test for the split case.",
+            "sources": [
+                { "type": "commit", "ref": "3f9c2ab", "label": "Orders (Checkout): stop charging the delivery fee twice on split orders", "url": null },
+                { "type": "session", "ref": "b2e41d07-5c1a-4f0e-9a43-7d2f8e6c1b90", "label": "Trace the double delivery fee", "url": null }
+            ]
+        },
+        {
+            "date": "2026-10-21",
+            "lane": "side-project",
+            "summary": "Sketched the weekly summary screen and wrote down the open questions.",
+            "sources": [
+                { "type": "artifact", "ref": "weekly-summary-sketch", "label": "Weekly summary sketch", "url": "https://example.com/weekly-summary-sketch" },
+                { "type": "note", "ref": "weekly-summary-questions", "label": "Open questions for the weekly summary", "url": null }
+            ]
+        }
+    ]
+}
+```
+
+- `range` is the days the file covers; every card's `date` falls inside it (`YYYY-MM-DD`).
+- `lanes` lists every lane the cards use. A lane is created or updated by its `key`: 1 to 40
+  lowercase letters, digits or hyphens. `color` is `#rrggbb`; `order` places it on the board.
+- One card per lane per day, with a summary of at most 600 characters and at least one source.
+  Importing a card replaces the one stored for that day and lane; an import never deletes cards.
+- A source's `type` is `commit`, `session`, `artifact` or `note`; `url` is an http(s) address or
+  `null`.
+- A file with any problem is refused whole, with one message per problem, and nothing is written.
+
 ## License
 
 MIT

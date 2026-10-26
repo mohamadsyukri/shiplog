@@ -5,6 +5,7 @@ use Database\Seeders\MenuSeeder;
 use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 /*
@@ -34,4 +35,22 @@ function superAdmin(): User
     $user->assignRole(config('access.super_admin_role'));
 
     return $user;
+}
+
+/**
+ * The README's example Shiplog file as the JSON text an import reads, optionally broken on purpose.
+ *
+ * @param  array<string, mixed>  $changes  dot path => new value
+ * @param  list<string>  $remove  dot paths to drop
+ */
+function shiplogFile(array $changes = [], array $remove = []): string
+{
+    $file = json_decode((string) file_get_contents(base_path('tests/Fixtures/shiplog-example.json')), true, 512, JSON_THROW_ON_ERROR);
+
+    foreach ($changes as $path => $value) {
+        data_set($file, $path, $value);
+    }
+    Arr::forget($file, $remove);
+
+    return json_encode($file, JSON_THROW_ON_ERROR);
 }
