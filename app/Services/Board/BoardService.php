@@ -10,6 +10,7 @@ use App\Models\Lane;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 final readonly class BoardService
 {
@@ -20,13 +21,17 @@ final readonly class BoardService
 
     /**
      * Days with at least one card, newest first, starting before $before (or from the newest day).
-     * Only days with work count, so a quiet fortnight doesn't push older work off the page.
+     * Only days with work count, so a quiet fortnight doesn't push older work off the page. A search
+     * keeps only the cards that match it, and the days that have one.
      */
-    public function page(?CarbonImmutable $before, int $days = self::DAYS_PER_PAGE): BoardPage
+    public function page(?CarbonImmutable $before, ?string $search = null, int $days = self::DAYS_PER_PAGE): BoardPage
     {
+        $matching = $search === null ? null : $this->matching($search);
+
         // Dates as stored (Y-m-d strings, see ImportService::import), so they match whereIn below.
         // One row past the page says whether an older page exists.
         $dates = Entry::query()
+            ->when($matching !== null, fn (Builder $query) => $query->whereIn('id', $matching))
             ->when($before, fn (Builder $query, CarbonImmutable $day) => $query->where('date', '<', $day->toDateString()))
             ->distinct()
             ->orderByDesc('date')
@@ -38,6 +43,7 @@ final readonly class BoardService
 
         $cardsByDate = Entry::query()
             ->whereIn('date', $dates->all())
+            ->when($matching !== null, fn (Builder $query) => $query->whereIn('id', $matching))
             ->get()
             ->groupBy(fn (Entry $entry): string => $entry->date->toDateString());
 
@@ -53,9 +59,29 @@ final readonly class BoardService
             ])->all(),
             updatedUpTo: $updatedUpTo === null ? null : CarbonImmutable::parse($updatedUpTo),
             olderBefore: $hasOlder ? $dates->last() : null,
-            // Only the newest page leads with the figures; older pages are for reading back.
-            figures: $before === null && $dates->isNotEmpty() ? $this->figures($lanes, $updatedUpTo ?? $dates->first()) : null,
+            // Only the newest page leads with the figures; older pages and searches are for reading back.
+            figures: $before === null && $search === null && $dates->isNotEmpty() ? $this->figures($lanes, $updatedUpTo ?? $dates->first()) : null,
         );
+    }
+
+    /**
+     * The ids of the cards whose summary, or a source's label or ref, contains $search in any case.
+     * Matched here rather than with LIKE on the sources column: that is JSON text, where a LIKE also
+     * hits its key names ("label") and misses what the encoding escaped (a slash, an accented letter).
+     * A lane has at most one card a day, so reading every card stays small.
+     *
+     * @return list<int>
+     */
+    private function matching(string $search): array
+    {
+        return Entry::query()
+            ->select(['id', 'summary', 'sources'])
+            ->lazyById(500)
+            ->filter(fn (Entry $entry): bool => Str::contains($entry->summary, $search, ignoreCase: true)
+                || collect($entry->sources)->contains(fn (array $source): bool => Str::contains(($source['label'] ?? '').' '.($source['ref'] ?? ''), $search, ignoreCase: true)))
+            ->pluck('id')
+            ->values()
+            ->all();
     }
 
     /**

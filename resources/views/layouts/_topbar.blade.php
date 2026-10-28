@@ -14,6 +14,11 @@
 
     <x-breadcrumb :items="$breadcrumbs ?? []" class="app-crumb d-none d-md-block" />
 
+    {{-- Whoever may open the board may search it; on phones the field is on the board itself. --}}
+    @if (auth()->check() || config('shiplog.demo'))
+        @include('layouts._search', ['id' => 'app-search', 'class' => 'app-search d-none d-md-flex'])
+    @endif
+
     <div class="app-bar-end">
         <div class="app-theme" role="group" aria-label="{{ __('Theme') }}">
             @foreach (['light' => ['bi-sun', __('Light')], 'dark' => ['bi-moon-stars', __('Dark')], 'auto' => ['bi-circle-half', __('Auto')]] as $choice => [$icon, $label])

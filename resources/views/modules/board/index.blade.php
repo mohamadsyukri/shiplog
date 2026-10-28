@@ -7,9 +7,17 @@
         <p class="small text-body-secondary mb-3">{{ __('Updated up to :date', ['date' => $page->updatedUpTo->format('d/m/Y')]) }}</p>
     @endif
 
+    {{-- From md the search field is in the command bar (layouts/_topbar). --}}
+    @include('layouts._search', ['id' => 'board-search', 'class' => 'board-search d-md-none'])
+
     @if ($page->days === [])
         <x-card>
-            @if ($before)
+            @if ($search !== null)
+                <p class="mb-0">
+                    {{ __('No cards match “:search”.', ['search' => $search]) }}
+                    <a href="{{ route('board.index') }}">{{ __('Clear the search') }}</a>
+                </p>
+            @elseif ($before)
                 <p class="mb-0">
                     {{ __('No days with work before :date.', ['date' => $before->format('d/m/Y')]) }}
                     <a href="{{ route('board.index') }}">{{ __('Newest days') }}</a>
@@ -29,6 +37,13 @@
             @endif
         </x-card>
     @else
+        @if ($search !== null)
+            <p class="board-search-note">
+                {{ __('Cards matching “:search”.', ['search' => $search]) }}
+                <a href="{{ route('board.index') }}">{{ __('Clear the search') }}</a>
+            </p>
+        @endif
+
         {{-- One row of filters above everything they scope: the figures follow both, the diary its lanes. --}}
         <div class="board-filters">
             @include('modules.board._partials.lane-filter', ['lanes' => $page->lanes])
@@ -76,10 +91,10 @@
             @if ($before || $page->olderBefore)
                 <nav class="d-flex flex-wrap gap-2 mt-3" aria-label="{{ __('Board pages') }}">
                     @if ($before)
-                        <x-button variant="outline-secondary" icon="bi-arrow-up" :href="route('board.index')">{{ __('Newest days') }}</x-button>
+                        <x-button variant="outline-secondary" icon="bi-arrow-up" :href="route('board.index', ['q' => $search])">{{ __('Newest days') }}</x-button>
                     @endif
                     @if ($page->olderBefore)
-                        <x-button variant="outline-secondary" icon="bi-arrow-down" :href="route('board.index', ['before' => $page->olderBefore])">{{ __('Older days') }}</x-button>
+                        <x-button variant="outline-secondary" icon="bi-arrow-down" :href="route('board.index', ['before' => $page->olderBefore, 'q' => $search])">{{ __('Older days') }}</x-button>
                     @endif
                 </nav>
             @endif

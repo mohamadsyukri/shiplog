@@ -113,6 +113,48 @@ it('leads with the figures on the newest page only', function (): void {
         ->assertDontSee('Days with work');
 });
 
+it('finds cards by their summary or a source\'s label or ref, in any case, and leaves the rest out', function (): void {
+    $portal = Lane::factory()->create(['key' => 'portal', 'name' => 'Client portal', 'sort' => 1]);
+    $side = Lane::factory()->create(['key' => 'side', 'name' => 'Side project', 'sort' => 2]);
+    $source = fn (string $ref, string $label): array => ['type' => 'commit', 'ref' => $ref, 'label' => $label, 'url' => null];
+    Entry::factory()->for($portal)->create(['date' => '2026-10-21', 'summary' => 'Fixed the Delivery fee.', 'sources' => [$source('1a2b3c4', 'Fees')]]);
+    Entry::factory()->for($side)->create(['date' => '2026-10-21', 'summary' => 'Sketched the weekly summary.', 'sources' => [$source('5d6e7f8', 'Sketch')]]);
+    Entry::factory()->for($portal)->create(['date' => '2026-10-20', 'summary' => 'Paired on checkout.', 'sources' => [$source('3f9c2ab', 'Orders/Checkout: stop charging the DELIVERY fee twice')]]);
+    Entry::factory()->for($side)->create(['date' => '2026-10-19', 'summary' => 'Wrote the install steps.', 'sources' => [$source('9a8b7c6', 'Docs')]]);
+
+    $this->actingAs($this->user)->get(route('board.index', ['q' => 'delivery']))
+        ->assertSee('Cards matching “delivery”.')
+        ->assertSeeInOrder(['Fixed the Delivery fee.', 'Paired on checkout.'])
+        ->assertDontSee('Sketched the weekly summary.')
+        ->assertDontSee('19/10/2026')
+        ->assertDontSee('window.boardFigures', false)
+        ->assertSee('name="q" id="app-search" value="delivery"', false);
+
+    // A ref, and a label with a slash, which the JSON column stores escaped.
+    $this->actingAs($this->user)->get(route('board.index', ['q' => '3F9C2AB']))->assertSee('Paired on checkout.')->assertDontSee('Fixed the Delivery fee.');
+    $this->actingAs($this->user)->get(route('board.index', ['q' => 'orders/checkout']))->assertSee('Paired on checkout.');
+    // The JSON's own key names are not text on a card.
+    $this->actingAs($this->user)->get(route('board.index', ['q' => 'label']))->assertSee('No cards match “label”.');
+});
+
+it('keeps the search on the links to older and newest days', function (): void {
+    $lane = Lane::factory()->create();
+    $dates = collect(range(0, 30))->map(fn (int $i): CarbonImmutable => CarbonImmutable::parse('2026-10-21')->subDays($i));
+    $dates->each(fn (CarbonImmutable $date) => Entry::factory()->for($lane)->create(['date' => $date->toDateString(), 'summary' => 'Deployed the release.']));
+    $oldestShown = $dates[29];
+
+    $this->actingAs($this->user)->get(route('board.index', ['q' => 'deployed']))
+        ->assertSee('href="'.e(route('board.index', ['before' => $oldestShown->toDateString(), 'q' => 'deployed'])).'"', false);
+
+    $this->actingAs($this->user)->get(route('board.index', ['before' => $oldestShown->toDateString(), 'q' => 'deployed']))
+        ->assertSee($dates[30]->format('d/m/Y'))
+        ->assertSee('href="'.route('board.index', ['q' => 'deployed']).'"', false);
+});
+
+it('refuses a search longer than 100 characters', function (): void {
+    $this->actingAs($this->user)->get(route('board.index', ['q' => str_repeat('a', 101)]))->assertSessionHasErrors('q');
+});
+
 it('shows 30 days with work per page and links to the older days', function (): void {
     $lane = Lane::factory()->create();
     // Every other day, so a page counts days with work, not calendar days.
