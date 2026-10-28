@@ -29,9 +29,25 @@
             @endif
         </x-card>
     @else
+        {{-- One row of filters above everything they scope: the figures follow both, the diary its lanes. --}}
+        <div class="board-filters">
+            @include('modules.board._partials.lane-filter', ['lanes' => $page->lanes])
+            @if ($page->figures)
+                <div class="btn-group board-period" role="group" aria-label="{{ __('Period') }}">
+                    @foreach ([14, 30] as $periodDays)
+                        <button type="button" class="btn btn-outline-secondary" data-period="{{ $periodDays }}" aria-pressed="{{ $periodDays === 30 ? 'true' : 'false' }}">{{ __('Last :days days', ['days' => $periodDays]) }}</button>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        @if ($page->figures)
+            @include('modules.board._partials.figures', ['figures' => $page->figures])
+        @endif
+
         <x-card :title="__('Diary')">
             <x-slot:actions>
-                @include('modules.board._partials.lane-filter', ['lanes' => $page->lanes])
+                <span class="small text-body-secondary">{{ __('Newest first. Select a card for its sources.') }}</span>
             </x-slot:actions>
 
             {{-- The size container: below 54rem the days stack (board.css). --}}

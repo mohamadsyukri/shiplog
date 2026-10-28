@@ -1,7 +1,8 @@
 /**
  * The board's diary (modules/board): a card opens its details in the side pane, Newer and Older step through
  * its lane on this page, Copy puts a source's ref on the clipboard, and the Lanes filter hides lanes,
- * remembered in this browser under 'board-lanes' (the keys of the hidden lanes).
+ * remembered in this browser under 'board-lanes' (the keys of the hidden lanes) and announced as a
+ * 'board:lanes' event for the figures.
  */
 export function initBoard() {
     const board = document.querySelector('[data-board]');
@@ -169,6 +170,8 @@ function initLaneFilter(board, pane) {
                 : shown.map((lane) => lane.dataset.name).join(', ');
 
         pane.closeIfHidden();
+        // The figures (board-figures.js) follow the same lanes.
+        document.dispatchEvent(new CustomEvent('board:lanes', { detail: { shown: shown.map((lane) => lane.value) } }));
 
         return hidden;
     };

@@ -76,6 +76,43 @@ it('lists every lane in lane order in the Lanes filter', function (): void {
         ->assertSeeInOrder(['value="portal" data-name="Client portal"', 'value="side" data-name="Side project"'], false);
 });
 
+it('gives the figures each of the last 60 days up to the newest day covered, with the sources of each lane\'s card', function (): void {
+    $portal = Lane::factory()->create(['key' => 'portal', 'name' => 'Client portal', 'color' => '#2563eb', 'sort' => 1]);
+    $side = Lane::factory()->create(['key' => 'side', 'name' => 'Side project', 'color' => '#16a34a', 'sort' => 2]);
+    $source = ['type' => 'commit', 'ref' => '3f9c2ab', 'label' => 'A commit', 'url' => null];
+    Entry::factory()->for($portal)->create(['date' => '2026-10-21', 'sources' => [$source, $source]]);
+    Entry::factory()->for($side)->create(['date' => '2026-10-21', 'sources' => [$source]]);
+    // 22/10 back 59 days is 24/08: the first day counted; 23/08 is one too old.
+    Entry::factory()->for($portal)->create(['date' => '2026-08-24', 'sources' => [$source]]);
+    Entry::factory()->for($side)->create(['date' => '2026-08-23', 'sources' => [$source]]);
+    Import::factory()->create(['range_from' => '2026-10-15', 'range_to' => '2026-10-22']);
+
+    $figures = $this->actingAs($this->user)->get(route('board.index'))
+        ->assertSee('window.boardFigures', false)
+        ->assertSee('Days with work')
+        ->viewData('page')->figures;
+
+    expect($figures['until'])->toBe('2026-10-22')
+        ->and($figures['lanes'])->toBe([
+            ['key' => 'portal', 'name' => 'Client portal', 'color' => '#2563eb'],
+            ['key' => 'side', 'name' => 'Side project', 'color' => '#16a34a'],
+        ])
+        ->and($figures['days'])->toHaveCount(60)
+        ->and($figures['days'][0])->toBe(['date' => '2026-08-24', 'sources' => ['portal' => 1]])
+        ->and($figures['days'][58])->toBe(['date' => '2026-10-21', 'sources' => ['portal' => 2, 'side' => 1]])
+        ->and($figures['days'][59])->toBe(['date' => '2026-10-22', 'sources' => []]);
+});
+
+it('leads with the figures on the newest page only', function (): void {
+    Entry::factory()->create(['date' => '2026-10-21']);
+    Entry::factory()->create(['date' => '2026-10-19']);
+
+    $this->actingAs($this->user)->get(route('board.index', ['before' => '2026-10-21']))
+        ->assertSee('19/10/2026')
+        ->assertDontSee('window.boardFigures', false)
+        ->assertDontSee('Days with work');
+});
+
 it('shows 30 days with work per page and links to the older days', function (): void {
     $lane = Lane::factory()->create();
     // Every other day, so a page counts days with work, not calendar days.

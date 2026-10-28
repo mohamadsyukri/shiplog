@@ -4,6 +4,7 @@ import DataTable from 'datatables.net-bs5';
 import select2 from 'select2';
 
 import { initBoard } from './components/board';
+import { initBoardFigures } from './components/board-figures';
 import { initConfirm } from './components/confirm';
 import { initDataTables, initFilteredLinks } from './components/datatable';
 import { initNavCollapse } from './components/nav';
@@ -26,5 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initThemeSwitch();
     initNavCollapse();
     initBoard();
+    initBoardFigures(); // after initBoard, which restores the Lanes filter the figures read
     showFlashToasts();
 });

@@ -7,7 +7,7 @@
         {{ __('Lanes:') }}
         <strong class="board-filter-shown" data-filter-label data-all="{{ __('All') }}" data-none="{{ __('None') }}">{{ __('All') }}</strong>
     </button>
-    <div class="dropdown-menu dropdown-menu-end board-filter-menu">
+    <div class="dropdown-menu board-filter-menu">
         <div class="form-check">
             <input class="form-check-input" type="checkbox" id="board-lanes-all" data-filter-all checked>
             <label class="form-check-label" for="board-lanes-all">{{ __('Select all') }}</label>
