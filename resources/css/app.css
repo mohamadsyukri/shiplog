@@ -3,6 +3,9 @@
 @import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
 @import 'select2/dist/css/select2.min.css';
 @import 'select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+@import './theme.css';
 
 /* App shell: sidebar on the left (an offcanvas below lg), content on the right. */
 :root {
