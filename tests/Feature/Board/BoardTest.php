@@ -31,7 +31,7 @@ it('shows the newest day first, with one column per lane in lane order', functio
         ->assertSeeInOrder(['21/10/2026', 'Newest card.', '20/10/2026', 'Middle card.', '19/10/2026', 'Oldest card.']);
 });
 
-it('shows a dash for a lane with no card that day', function (): void {
+it('tells screen readers when a lane has no card that day', function (): void {
     $portal = Lane::factory()->create(['name' => 'Client portal', 'sort' => 1]);
     Lane::factory()->create(['name' => 'Side project', 'sort' => 2]);
     Entry::factory()->for($portal)->create(['date' => '2026-10-20']);
@@ -51,6 +51,29 @@ it('opens a card to show its sources', function (): void {
         ->assertSee('2 sources')
         ->assertSeeInOrder(['Orders (Checkout): stop charging the delivery fee twice', '3f9c2ab'])
         ->assertSee('href="https://example.com/weekly-summary-sketch"', false);
+});
+
+it('names the lane and counts the sources on each card, which opens its details in the pane', function (): void {
+    $portal = Lane::factory()->create(['key' => 'portal', 'name' => 'Client portal']);
+    $entry = Entry::factory()->for($portal)->create(['date' => '2026-10-21', 'sources' => [
+        ['type' => 'commit', 'ref' => '3f9c2ab', 'label' => 'Orders (Checkout): stop charging the delivery fee twice', 'url' => null],
+    ]]);
+
+    $this->actingAs($this->user)->get(route('board.index'))
+        ->assertSee('data-card="board-card-'.$entry->id.'" aria-controls="board-pane"', false)
+        ->assertSee('id="board-card-'.$entry->id.'" data-title="Client portal" data-date="Wednesday 21/10/2026"', false)
+        ->assertSeeInOrder(['Client portal', '1 source', 'Sources (1)', 'data-copy="3f9c2ab"'], false)
+        ->assertSee('id="board-pane"', false);
+});
+
+it('lists every lane in lane order in the Lanes filter', function (): void {
+    Lane::factory()->create(['key' => 'side', 'name' => 'Side project', 'sort' => 2]);
+    $portal = Lane::factory()->create(['key' => 'portal', 'name' => 'Client portal', 'sort' => 1]);
+    Entry::factory()->for($portal)->create(['date' => '2026-10-21']);
+
+    $this->actingAs($this->user)->get(route('board.index'))
+        ->assertSee('Select all')
+        ->assertSeeInOrder(['value="portal" data-name="Client portal"', 'value="side" data-name="Side project"'], false);
 });
 
 it('shows 30 days with work per page and links to the older days', function (): void {

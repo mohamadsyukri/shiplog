@@ -29,28 +29,46 @@
             @endif
         </x-card>
     @else
-        <div class="board" style="--board-lanes: {{ $page->lanes->count() }}">
-            <div class="board-row board-head" aria-hidden="true">
-                <div></div>
-                @foreach ($page->lanes as $lane)
-                    <div class="board-lane" style="--lane-color: {{ $lane->color }}">{{ $lane->name }}</div>
-                @endforeach
+        <x-card :title="__('Diary')">
+            <x-slot:actions>
+                @include('modules.board._partials.lane-filter', ['lanes' => $page->lanes])
+            </x-slot:actions>
+
+            {{-- The size container: below 54rem the days stack (board.css). --}}
+            <div class="board-frame">
+                <div class="board" data-board style="--board-lanes: {{ $page->lanes->count() }}">
+                    <div class="board-row board-head" aria-hidden="true">
+                        <div class="board-head-day">{{ __('Day') }}</div>
+                        @foreach ($page->lanes as $lane)
+                            <div class="board-lane" data-lane="{{ $lane->key }}" style="--lane-color: {{ $lane->color }}">
+                                <span class="board-swatch"></span>
+                                <span class="text-truncate">{{ $lane->name }}</span>
+                                <span class="board-lane-count">{{ collect($page->days)->filter(fn (array $day): bool => isset($day['cards'][$lane->id]))->count() }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @foreach ($page->days as $day)
+                        @include('modules.board._partials.day-row', ['day' => $day, 'lanes' => $page->lanes])
+                    @endforeach
+                </div>
+
+                <p class="board-message" data-board-none hidden>{{ __('Choose at least one lane in Lanes.') }}</p>
+                <p class="board-message" data-board-quiet hidden>{{ __('The lanes you chose have no cards on this page.') }}</p>
             </div>
 
-            @foreach ($page->days as $day)
-                @include('modules.board._partials.day-row', ['day' => $day, 'lanes' => $page->lanes])
-            @endforeach
-        </div>
+            @if ($before || $page->olderBefore)
+                <nav class="d-flex flex-wrap gap-2 mt-3" aria-label="{{ __('Board pages') }}">
+                    @if ($before)
+                        <x-button variant="outline-secondary" icon="bi-arrow-up" :href="route('board.index')">{{ __('Newest days') }}</x-button>
+                    @endif
+                    @if ($page->olderBefore)
+                        <x-button variant="outline-secondary" icon="bi-arrow-down" :href="route('board.index', ['before' => $page->olderBefore])">{{ __('Older days') }}</x-button>
+                    @endif
+                </nav>
+            @endif
+        </x-card>
 
-        @if ($before || $page->olderBefore)
-            <nav class="d-flex gap-2 mt-3" aria-label="{{ __('Board pages') }}">
-                @if ($before)
-                    <x-button variant="outline-secondary" icon="bi-arrow-up" :href="route('board.index')">{{ __('Newest days') }}</x-button>
-                @endif
-                @if ($page->olderBefore)
-                    <x-button variant="outline-secondary" icon="bi-arrow-down" :href="route('board.index', ['before' => $page->olderBefore])">{{ __('Older days') }}</x-button>
-                @endif
-            </nav>
-        @endif
+        @include('modules.board._partials.pane')
     @endif
 </x-layouts.app>

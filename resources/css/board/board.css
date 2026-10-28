@@ -1,78 +1,322 @@
-/* The board: days down (newest first), lanes across. Below md each day's cards stack. */
+/*
+ * The board's diary: days down (newest first), lanes across, in one card. The lanes share its width, so the
+ * lane headers can stick under the command bar (a sideways-scrolling box would stop them sticking). Below
+ * 54rem of card each day stacks its cards instead. The details pane and the Lanes filter are
+ * resources/js/components/board.js.
+ */
+.board-frame {
+    container-type: inline-size;
+}
+
 .board {
-    display: grid;
-    gap: 0.75rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
 }
 
 .board-row {
     display: grid;
-    gap: 0.75rem;
+    grid-template-columns: 7.5rem repeat(var(--board-lanes), minmax(0, 1fr));
 }
 
-.board-head,
-.board-empty {
-    display: none;
+.board-row + .board-row {
+    border-top: 1px solid var(--bs-border-color);
 }
 
-.board-lane {
-    padding: 0.5rem 0.75rem;
-    font-weight: 600;
-    background-color: var(--bs-body-bg);
-    border-top: 3px solid var(--lane-color);
-    border-radius: var(--bs-border-radius);
-}
-
-.board-date {
-    padding-top: 0.5rem;
-}
-
-.board-card {
-    border-left: 4px solid var(--lane-color);
-}
-
-/* The lane colour comes from the user's config and may be too light for text, so it marks a dot. */
-.board-card-lane::before {
-    content: '';
+/* The lane colour comes from the user's config and may be too light for text, so it marks a square. */
+.board-swatch {
     display: inline-block;
-    width: 0.6rem;
-    height: 0.6rem;
-    margin-right: 0.4rem;
-    border-radius: 50%;
+    flex-shrink: 0;
+    width: .625rem;
+    height: .625rem;
+    margin-right: .5rem;
+    border-radius: 2px;
     background-color: var(--lane-color);
 }
 
-/* Keeps the line breaks a summary was written with, without trusting it as HTML. */
+.board-head {
+    position: sticky;
+    top: var(--app-bar-height);
+    z-index: 2;
+    background-color: var(--bs-body-bg);
+    border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+}
+
+.board-head > * {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: .625rem .75rem;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--bs-secondary-color);
+}
+
+.board-lane-count {
+    margin-left: auto;
+    padding-left: .5rem;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+}
+
+.board-date {
+    display: flex;
+    flex-direction: column;
+    padding: .75rem;
+    font-size: inherit;
+}
+
+.board-dmy {
+    font-size: .75rem;
+    font-weight: 400;
+    color: var(--bs-secondary-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.board-cell {
+    min-width: 0;
+    padding: .375rem;
+    border-left: 1px solid var(--bs-border-color);
+}
+
+.board-card {
+    display: flex;
+    flex-direction: column;
+    gap: .375rem;
+    width: 100%;
+    height: 100%;
+    padding: .5rem .625rem;
+    border: 0;
+    border-left: 3px solid var(--lane-color);
+    border-radius: var(--bs-border-radius);
+    background-color: transparent;
+    color: inherit;
+    text-align: left;
+    transition: background-color 120ms var(--sl-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .board-card:hover {
+        background-color: var(--sl-hover-strong);
+    }
+}
+
+.board-card:focus-visible {
+    outline: 2px solid var(--sl-accent);
+    outline-offset: 1px;
+}
+
+.board-card[aria-expanded=true] {
+    background-color: var(--sl-accent-soft);
+    box-shadow: inset 0 0 0 1px var(--sl-accent);
+}
+
+.board-card-lane {
+    display: none;
+    align-items: center;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--bs-secondary-color);
+}
+
+/* Three lines here; the pane shows the rest. pre-line keeps the summary's own line breaks. */
 .board-summary {
+    display: -webkit-box;
+    overflow: hidden;
     white-space: pre-line;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
 }
 
-.board-sources summary {
-    cursor: pointer;
+.board-card-meta {
+    font-size: .75rem;
+    color: var(--bs-secondary-color);
 }
 
-@media (min-width: 768px) {
-    /* Many lanes scroll sideways inside the board instead of widening the page. */
+.board-message {
+    margin: 0;
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--bs-secondary-color);
+}
+
+@container (max-width: 54rem) {
     .board {
-        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        gap: .75rem;
+        border: 0;
     }
 
     .board-row {
-        grid-template-columns: 7.5rem repeat(var(--board-lanes), minmax(13rem, 1fr));
-        align-items: start;
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        padding: .25rem;
+        border: 1px solid var(--bs-border-color);
+        border-radius: var(--bs-border-radius);
     }
 
-    .board-head {
-        display: grid;
+    .board-row + .board-row {
+        border-top: 1px solid var(--bs-border-color);
     }
 
+    .board-head,
     .board-empty {
-        display: block;
-        padding-top: 0.5rem;
-        text-align: center;
-        color: var(--bs-secondary-color);
+        display: none;
+    }
+
+    .board-date {
+        flex-direction: row;
+        align-items: baseline;
+        gap: .5rem;
+        padding: .5rem;
+    }
+
+    .board-cell {
+        padding: 0;
+        border-left: 0;
     }
 
     .board-card-lane {
-        display: none;
+        display: flex;
+    }
+}
+
+/* The Lanes filter. */
+.board-filter-shown {
+    display: inline-block;
+    max-width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.board-filter-menu {
+    min-width: 14rem;
+    padding: .375rem;
+}
+
+.board-filter-menu .form-check {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+    padding: .375rem .5rem;
+    border-radius: var(--bs-border-radius);
+}
+
+.board-filter-menu .form-check-input {
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.board-filter-menu .form-check-label {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .board-filter-menu .form-check:hover {
+        background-color: var(--sl-hover-strong);
+    }
+}
+
+/* The details pane: under the command bar, sliding in on the drawer curve (Bootstrap drops it for reduced motion). */
+.board-pane {
+    --bs-offcanvas-width: 400px;
+    --bs-offcanvas-bg: var(--bs-body-bg);
+    --bs-offcanvas-border-color: var(--bs-border-color);
+    --bs-offcanvas-transition: transform 300ms var(--sl-ease-drawer);
+    box-shadow: var(--sl-shadow-dialog);
+}
+
+/* Two classes, to outrank Bootstrap's .offcanvas.offcanvas-end{top:0}. */
+.board-pane.offcanvas-end {
+    top: var(--app-bar-height);
+}
+
+.board-pane-head {
+    align-items: flex-start;
+    gap: .75rem;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.board-pane-heading {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.board-pane-head .offcanvas-title {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.board-pane-date {
+    margin-top: .125rem;
+    color: var(--bs-secondary-color);
+}
+
+.board-pane-summary {
+    margin-bottom: 1.25rem;
+    font-size: .9375rem;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.board-pane-label {
+    margin-bottom: .375rem;
+    font-size: .75rem;
+    color: var(--bs-secondary-color);
+}
+
+.board-sources {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.board-sources li {
+    display: grid;
+    grid-template-columns: 1rem minmax(0, 1fr) auto;
+    gap: .625rem;
+    align-items: start;
+    padding: .625rem .75rem;
+}
+
+.board-sources li + li {
+    border-top: 1px solid var(--bs-border-color);
+}
+
+.board-sources .bi {
+    color: var(--bs-secondary-color);
+}
+
+.board-ref {
+    display: block;
+    margin-top: .125rem;
+    font-size: .75rem;
+    color: var(--bs-secondary-color);
+}
+
+.board-pane-steps {
+    display: flex;
+    gap: .5rem;
+    padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--bs-border-color);
+}
+
+.board-pane-steps .btn {
+    flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .board-card {
+        transition: none;
     }
 }

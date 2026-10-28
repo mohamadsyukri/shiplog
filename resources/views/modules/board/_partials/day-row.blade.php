@@ -1,15 +1,17 @@
-{{-- One day: the date, then a cell per lane — its card, or a dash when that lane had no work. --}}
-<section class="board-row" aria-label="{{ $day['date']->format('l d/m/Y') }}">
+{{-- One day: the date, then a cell per lane — its card, or an empty cell when that lane had no work. --}}
+<section class="board-row" data-day aria-label="{{ $day['date']->format('l d/m/Y') }}">
     <h2 class="board-date h6 mb-0">
-        <span class="text-body-secondary">{{ $day['date']->format('D') }}</span> {{ $day['date']->format('d/m/Y') }}
+        <span class="board-weekday">{{ $day['date']->format('D') }}</span>
+        <span class="board-dmy">{{ $day['date']->format('d/m/Y') }}</span>
     </h2>
 
     @foreach ($lanes as $lane)
         @isset($day['cards'][$lane->id])
-            @include('modules.board._partials.card', ['entry' => $day['cards'][$lane->id], 'lane' => $lane])
+            <div class="board-cell" data-lane="{{ $lane->key }}">
+                @include('modules.board._partials.card', ['entry' => $day['cards'][$lane->id], 'lane' => $lane, 'date' => $day['date']])
+            </div>
         @else
-            <div class="board-empty">
-                <span aria-hidden="true">—</span>
+            <div class="board-cell board-empty" data-lane="{{ $lane->key }}">
                 <span class="visually-hidden">{{ __(':lane: no card', ['lane' => $lane->name]) }}</span>
             </div>
         @endisset

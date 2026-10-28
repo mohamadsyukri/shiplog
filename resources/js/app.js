@@ -3,6 +3,7 @@ import jQuery from 'jquery';
 import DataTable from 'datatables.net-bs5';
 import select2 from 'select2';
 
+import { initBoard } from './components/board';
 import { initConfirm } from './components/confirm';
 import { initDataTables, initFilteredLinks } from './components/datatable';
 import { initNavCollapse } from './components/nav';
@@ -24,5 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initSelect2();
     initThemeSwitch();
     initNavCollapse();
+    initBoard();
     showFlashToasts();
 });
