@@ -2,7 +2,7 @@
 
 A self-hosted work diary that writes itself from your git commits and Claude Code sessions.
 
-![The Shiplog board: days down, lanes across, one summary card per lane per day](docs/board.png)
+![The Shiplog board: the last 30 days in figures and charts, then the diary, days down and lanes across, one summary card per lane per day](docs/board.png)
 
 A Claude Code skill reads what you committed and what you worked through with Claude, writes one
 short card per project ("lane") per day, and Shiplog shows them as a board: newest day first, each
