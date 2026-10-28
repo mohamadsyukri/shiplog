@@ -29,9 +29,8 @@
         </div>
 
         @auth
-            @php($initials = Str::of(auth()->user()->name)->explode(' ')->filter()->take(2)->map(fn (string $word): string => mb_strtoupper(mb_substr($word, 0, 1)))->implode(''))
             <div class="dropdown">
-                <button class="app-avatar" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('Account: :name', ['name' => auth()->user()->name]) }}">{{ $initials }}</button>
+                <button class="app-avatar" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('Account: :name', ['name' => auth()->user()->name]) }}">{{ auth()->user()->initials() }}</button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li class="dropdown-header app-account">
                         <strong>{{ auth()->user()->name }}</strong>

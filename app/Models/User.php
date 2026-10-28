@@ -32,7 +32,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Up to two capitals from the name ("Jane van Doe" gives "JV"), for the Users list's avatar.
+     * Up to two capitals from the name ("Jane van Doe" gives "JV"), for the account button and the Users list.
      */
     public function initials(): string
     {

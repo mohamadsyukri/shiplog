@@ -41,3 +41,11 @@ it('shows the error on the profile form when the current password is wrong', fun
         ->assertSee('is-invalid', false)
         ->assertSee('The provided password does not match your current password.');
 });
+
+it('shows the initials on the account button that opens Profile and Sign out', function (): void {
+    $user = User::factory()->create(['name' => 'Jane van Doe']);
+
+    $this->actingAs($user)->get(route('profile.edit'))
+        ->assertOk()
+        ->assertSee('aria-label="Account: Jane van Doe">JV</button>', false);
+});
