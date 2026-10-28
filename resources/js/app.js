@@ -5,7 +5,9 @@ import select2 from 'select2';
 
 import { initConfirm } from './components/confirm';
 import { initDataTables, initFilteredLinks } from './components/datatable';
+import { initNavCollapse } from './components/nav';
 import { initSelect2 } from './components/select2';
+import { initThemeSwitch } from './components/theme';
 import { showFlashToasts, toast } from './components/toast';
 
 // Globals for page scripts and jQuery plugins.
@@ -20,5 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDataTables();
     initFilteredLinks();
     initSelect2();
+    initThemeSwitch();
+    initNavCollapse();
     showFlashToasts();
 });

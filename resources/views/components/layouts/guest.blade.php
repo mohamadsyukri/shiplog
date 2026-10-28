@@ -12,10 +12,10 @@
     <main class="container">
         <div class="guest-card mx-auto">
             <div class="text-center mb-4">
-                <i class="bi bi-grid-1x2-fill fs-1 text-primary"></i>
-                <h1 class="h4 mt-2 mb-0">{{ config('app.name') }}</h1>
+                @include('layouts._logo', ['size' => 'lg'])
+                <h1 class="h4 mt-3 mb-0">{{ config('app.name') }}</h1>
             </div>
-            <div class="card shadow-sm">
+            <div class="card">
                 <div class="card-body p-4">
                     @if ($title)
                         <h2 class="h5 mb-3">{{ $title }}</h2>

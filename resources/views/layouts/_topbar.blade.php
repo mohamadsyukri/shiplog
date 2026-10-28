@@ -1,31 +1,49 @@
-<header class="navbar bg-body border-bottom px-3 py-2">
-    {{-- A demo visitor is not signed in: no sidebar to open and no account menu (config/shiplog.php). --}}
-    @guest
-        <a href="{{ route('board.index') }}" class="fw-semibold text-decoration-none">
-            <i class="bi bi-grid-1x2-fill text-primary me-1"></i>{{ config('app.name') }}
-        </a>
-    @else
-        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#app-sidebar" aria-controls="app-sidebar" aria-label="{{ __('Menu') }}">
+{{-- The command bar across every page: the menu, the mark, the page's breadcrumb, the theme switch and the account menu.
+     A demo visitor is not signed in, so gets no menu or account, only the mark and the switch (config/shiplog.php). --}}
+<header class="app-bar">
+    @auth
+        <button class="app-bar-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#app-sidebar" aria-controls="app-sidebar" aria-label="{{ __('Menu') }}">
             <i class="bi bi-list"></i>
         </button>
+        <button class="app-bar-btn d-none d-lg-grid" type="button" data-nav-toggle aria-controls="app-sidebar" aria-expanded="true" aria-label="{{ __('Collapse the menu') }}">
+            <i class="bi bi-list"></i>
+        </button>
+    @endauth
 
-        <div class="dropdown ms-auto">
-            <button class="btn btn-link text-body text-decoration-none dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle me-1"></i>{{ auth()->user()->name }}
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                <li><span class="dropdown-item-text small text-body-secondary">{{ auth()->user()->getRoleNames()->implode(', ') }}</span></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person me-2"></i>{{ __('Profile') }}</a>
-                </li>
-                <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>{{ __('Sign out') }}</button>
-                    </form>
-                </li>
-            </ul>
+    <a href="{{ route('board.index') }}" class="app-brand">@include('layouts._logo')<span>{{ config('app.name') }}</span></a>
+
+    <x-breadcrumb :items="$breadcrumbs ?? []" class="app-crumb d-none d-md-block" />
+
+    <div class="app-bar-end">
+        <div class="app-theme" role="group" aria-label="{{ __('Theme') }}">
+            @foreach (['light' => ['bi-sun', __('Light')], 'dark' => ['bi-moon-stars', __('Dark')], 'auto' => ['bi-circle-half', __('Auto')]] as $choice => [$icon, $label])
+                <button type="button" data-theme-choice="{{ $choice }}" aria-pressed="false" aria-label="{{ __(':theme theme', ['theme' => $label]) }}" title="{{ __(':theme theme', ['theme' => $label]) }}">
+                    <i class="bi {{ $icon }}" aria-hidden="true"></i><span>{{ $label }}</span>
+                </button>
+            @endforeach
         </div>
-    @endguest
+
+        @auth
+            @php($initials = Str::of(auth()->user()->name)->explode(' ')->filter()->take(2)->map(fn (string $word): string => mb_strtoupper(mb_substr($word, 0, 1)))->implode(''))
+            <div class="dropdown">
+                <button class="app-avatar" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('Account: :name', ['name' => auth()->user()->name]) }}">{{ $initials }}</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-header app-account">
+                        <strong>{{ auth()->user()->name }}</strong>
+                        <span>{{ auth()->user()->getRoleNames()->implode(', ') }}</span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person me-2"></i>{{ __('Profile') }}</a>
+                    </li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>{{ __('Sign out') }}</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        @endauth
+    </div>
 </header>

@@ -1,133 +1,150 @@
 /*
- * Shiplog's look, after Apple's grouped surfaces: the colours, type, corners and motion every screen
- * inherits. Bootstrap stays precompiled, so this sets its CSS variables. The compiled CSS also fixes
- * some colours per component (.btn-primary{--bs-btn-bg:#0d6efd}, Select2's whole theme), hence the
- * component blocks further down. layouts/_theme sets data-bs-theme on <html> before the first paint.
+ * Shiplog's look: the Workspace layout (after Power BI and Microsoft Fabric) in its Midnight colours, with
+ * Fluent 2's sizes: 14px body text, 4px corners on controls, 8px on cards, 12px on pop-ups, three shadow
+ * levels (fluent2.microsoft.design). Bootstrap stays precompiled, so this sets its CSS variables; the
+ * compiled CSS also fixes some colours per component (.btn-primary{--bs-btn-bg:#0d6efd}, Select2's whole
+ * theme, .table-light), hence the component blocks further down. layouts/_theme sets data-bs-theme on <html>
+ * before the first paint, from the Light / Dark / Auto switch.
  */
 
-/* Light. Apple's #007aff carries white text at only 4.02:1 (WCAG AA wants 4.5), so filled buttons use
-   #0071e3 (4.70) and links #0066cc (4.99 even on the grey page). Measured 27/10/2026. */
+/* Light. Measured 28/10/2026: white on the indigo buttons 5.38:1 (6.50 on hover), indigo links 5.38 on white
+   and 4.94 on the page, secondary text 6.48, field underlines 4.54 (WCAG wants 4.5 for text, 3 for borders). */
 :root,
 [data-bs-theme=light] {
-    --sl-page: #f2f2f7;
-    --sl-page-rgb: 242, 242, 247;
+    --sl-header: #0f1b3d;
+    --sl-header-ink: #fff;
+    --sl-header-ink-2: #9aa6cf;
+    --sl-header-field: #1b2a52;
+    --sl-header-hover: rgba(255, 255, 255, .1);
+    --sl-brand: #ff8a4c;
+    --sl-brand-ink: #1b0f0a;
+    --sl-canvas: #f4f5fa;
+    --sl-canvas-rgb: 244, 245, 250;
     --sl-surface: #fff;
     --sl-surface-rgb: 255, 255, 255;
-    --sl-raised: #e5e5ea;
-    --sl-raised-rgb: 229, 229, 234;
-    --sl-label: #1d1d1f;
-    --sl-label-rgb: 29, 29, 31;
-    --sl-label-2: #6e6e73;
-    --sl-label-2-rgb: 110, 110, 115;
-    --sl-label-3: #a1a1a6;
-    --sl-label-3-rgb: 161, 161, 166;
-    --sl-separator: rgba(60, 60, 67, .18);
-    --sl-fill: rgba(118, 118, 128, .12);
-    --sl-fill-strong: rgba(118, 118, 128, .2);
-    --sl-accent: #0066cc;
-    --sl-accent-rgb: 0, 102, 204;
-    --sl-accent-hover: #004f9e;
-    --sl-accent-hover-rgb: 0, 79, 158;
-    --sl-accent-soft: rgba(0, 113, 227, .1);
-    --sl-accent-soft-strong: rgba(0, 113, 227, .16);
-    --sl-fill-accent: #0071e3;
-    --sl-fill-accent-hover: #0068d1;
-    --sl-fill-accent-active: #005bb8;
-    --sl-focus: rgba(0, 113, 227, .3);
-    --sl-shadow: 0 1px 1px rgba(0, 0, 0, .04), 0 2px 10px rgba(0, 0, 0, .05);
-    --sl-shadow-lift: 0 0 0 .5px var(--sl-separator), 0 10px 30px rgba(0, 0, 0, .12);
+    --sl-nav: #fbfbfe;
+    --sl-raised: #eceef6;
+    --sl-raised-rgb: 236, 238, 246;
+    --sl-ink: #161a2e;
+    --sl-ink-rgb: 22, 26, 46;
+    --sl-ink-2: #565d7a;
+    --sl-ink-2-rgb: 86, 93, 122;
+    --sl-ink-3: #8a90ab;
+    --sl-ink-3-rgb: 138, 144, 171;
+    --sl-line: #e2e4f0;
+    --sl-field-line: #6e7593;
+    --sl-hover: rgba(22, 26, 46, .045);
+    --sl-hover-strong: rgba(22, 26, 46, .08);
+    --sl-accent: #4c5fd5;
+    --sl-accent-rgb: 76, 95, 213;
+    --sl-accent-hover: #3b4cbf;
+    --sl-accent-hover-rgb: 59, 76, 191;
+    --sl-accent-soft: #eef0fd;
+    --sl-accent-soft-strong: #e0e4fb;
+    --sl-btn: #4c5fd5;
+    --sl-btn-hover: #4152c4;
+    --sl-btn-active: #3646b0;
+    --sl-focus: rgba(76, 95, 213, .35);
+    --sl-shadow-card: 0 0 2px rgba(0, 0, 0, .12), 0 2px 4px rgba(0, 0, 0, .14);
+    --sl-shadow-menu: 0 0 2px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .14);
+    --sl-shadow-toast: 0 0 2px rgba(0, 0, 0, .12), 0 8px 16px rgba(0, 0, 0, .14);
+    --sl-shadow-dialog: 0 0 8px rgba(0, 0, 0, .12), 0 32px 64px rgba(0, 0, 0, .14);
     --sl-ease-out: cubic-bezier(.23, 1, .32, 1);
+    --sl-ease-drawer: cubic-bezier(.32, .72, 0, 1);
 }
 
-/* Dark: black page, #1c1c1e surfaces. #0a84ff reads at 4.66:1 on them; buttons keep #0071e3. */
+/* Dark: indigo links 6.82:1 on the cards, secondary text 7.44, field underlines 6.02; buttons keep #4c5fd5.
+   Fluent doubles the shadows' opacity in dark mode. */
 [data-bs-theme=dark] {
-    --sl-page: #000;
-    --sl-page-rgb: 0, 0, 0;
-    --sl-surface: #1c1c1e;
-    --sl-surface-rgb: 28, 28, 30;
-    --sl-raised: #2c2c2e;
-    --sl-raised-rgb: 44, 44, 46;
-    --sl-label: #f5f5f7;
-    --sl-label-rgb: 245, 245, 247;
-    --sl-label-2: #98989d;
-    --sl-label-2-rgb: 152, 152, 157;
-    --sl-label-3: #636366;
-    --sl-label-3-rgb: 99, 99, 102;
-    --sl-separator: rgba(84, 84, 88, .6);
-    --sl-fill: rgba(118, 118, 128, .24);
-    --sl-fill-strong: rgba(118, 118, 128, .36);
-    --sl-accent: #0a84ff;
-    --sl-accent-rgb: 10, 132, 255;
-    --sl-accent-hover: #409cff;
-    --sl-accent-hover-rgb: 64, 156, 255;
-    --sl-accent-soft: rgba(10, 132, 255, .18);
-    --sl-accent-soft-strong: rgba(10, 132, 255, .26);
-    --sl-focus: rgba(10, 132, 255, .4);
-    --sl-shadow: 0 0 0 1px rgba(255, 255, 255, .04);
-    --sl-shadow-lift: 0 0 0 .5px var(--sl-separator), 0 10px 30px rgba(0, 0, 0, .5);
+    --sl-header: #070a14;
+    --sl-header-ink: #e8eaf6;
+    --sl-header-ink-2: #8f97bd;
+    --sl-header-field: #18203a;
+    --sl-header-hover: rgba(255, 255, 255, .08);
+    --sl-canvas: #0b0e1a;
+    --sl-canvas-rgb: 11, 14, 26;
+    --sl-surface: #141a2e;
+    --sl-surface-rgb: 20, 26, 46;
+    --sl-nav: #0f1426;
+    --sl-raised: #1c2238;
+    --sl-raised-rgb: 28, 34, 56;
+    --sl-ink: #e8eaf6;
+    --sl-ink-rgb: 232, 234, 246;
+    --sl-ink-2: #a3a9c7;
+    --sl-ink-2-rgb: 163, 169, 199;
+    --sl-ink-3: #6f7699;
+    --sl-ink-3-rgb: 111, 118, 153;
+    --sl-line: #262d47;
+    --sl-field-line: #8f97bd;
+    --sl-hover: rgba(255, 255, 255, .05);
+    --sl-hover-strong: rgba(255, 255, 255, .09);
+    --sl-accent: #8b9cff;
+    --sl-accent-rgb: 139, 156, 255;
+    --sl-accent-hover: #a8b5ff;
+    --sl-accent-hover-rgb: 168, 181, 255;
+    --sl-accent-soft: rgba(139, 156, 255, .15);
+    --sl-accent-soft-strong: rgba(139, 156, 255, .24);
+    --sl-focus: rgba(139, 156, 255, .45);
+    --sl-shadow-card: 0 0 2px rgba(0, 0, 0, .24), 0 2px 4px rgba(0, 0, 0, .28);
+    --sl-shadow-menu: 0 0 2px rgba(0, 0, 0, .24), 0 4px 8px rgba(0, 0, 0, .28);
+    --sl-shadow-toast: 0 0 2px rgba(0, 0, 0, .24), 0 8px 16px rgba(0, 0, 0, .28);
+    --sl-shadow-dialog: 0 0 8px rgba(0, 0, 0, .24), 0 32px 64px rgba(0, 0, 0, .28);
 }
 
 /* Bootstrap's own variables, read from the tokens above in either theme. */
 :root,
 [data-bs-theme=light],
 [data-bs-theme=dark] {
-    --bs-font-sans-serif: -apple-system, BlinkMacSystemFont, "Geist Variable", "Segoe UI", system-ui, sans-serif;
+    --bs-font-sans-serif: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Geist Variable", system-ui, sans-serif;
     --bs-font-monospace: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    --bs-body-font-size: .9375rem;
-    --bs-body-color: var(--sl-label);
-    --bs-body-color-rgb: var(--sl-label-rgb);
+    --bs-body-font-size: .875rem;
+    --bs-body-line-height: 1.43;
+    --bs-body-color: var(--sl-ink);
+    --bs-body-color-rgb: var(--sl-ink-rgb);
     --bs-body-bg: var(--sl-surface);
     --bs-body-bg-rgb: var(--sl-surface-rgb);
-    --bs-emphasis-color: var(--sl-label);
-    --bs-emphasis-color-rgb: var(--sl-label-rgb);
-    --bs-secondary-color: var(--sl-label-2);
-    --bs-secondary-color-rgb: var(--sl-label-2-rgb);
+    --bs-emphasis-color: var(--sl-ink);
+    --bs-emphasis-color-rgb: var(--sl-ink-rgb);
+    --bs-secondary-color: var(--sl-ink-2);
+    --bs-secondary-color-rgb: var(--sl-ink-2-rgb);
     --bs-secondary-bg: var(--sl-raised);
     --bs-secondary-bg-rgb: var(--sl-raised-rgb);
-    --bs-tertiary-color: var(--sl-label-3);
-    --bs-tertiary-color-rgb: var(--sl-label-3-rgb);
-    --bs-tertiary-bg: var(--sl-page);
-    --bs-tertiary-bg-rgb: var(--sl-page-rgb);
+    --bs-tertiary-color: var(--sl-ink-3);
+    --bs-tertiary-color-rgb: var(--sl-ink-3-rgb);
+    --bs-tertiary-bg: var(--sl-canvas);
+    --bs-tertiary-bg-rgb: var(--sl-canvas-rgb);
     --bs-primary: var(--sl-accent);
     --bs-primary-rgb: var(--sl-accent-rgb);
     --bs-link-color: var(--sl-accent);
     --bs-link-color-rgb: var(--sl-accent-rgb);
     --bs-link-hover-color: var(--sl-accent-hover);
     --bs-link-hover-color-rgb: var(--sl-accent-hover-rgb);
-    --bs-border-color: var(--sl-separator);
-    --bs-border-color-translucent: var(--sl-separator);
-    --bs-border-radius: .625rem;
-    --bs-border-radius-sm: .5rem;
-    --bs-border-radius-lg: .875rem;
-    --bs-border-radius-xl: 1rem;
-    --bs-border-radius-xxl: 1.25rem;
-    --bs-box-shadow-sm: var(--sl-shadow);
-    --bs-box-shadow: var(--sl-shadow-lift);
+    --bs-border-color: var(--sl-line);
+    --bs-border-color-translucent: var(--sl-line);
+    --bs-border-radius: .25rem;
+    --bs-border-radius-sm: .125rem;
+    --bs-border-radius-lg: .5rem;
+    --bs-border-radius-xl: .75rem;
+    --bs-border-radius-xxl: 1rem;
+    --bs-box-shadow-sm: var(--sl-shadow-card);
+    --bs-box-shadow: var(--sl-shadow-menu);
+    --bs-box-shadow-lg: var(--sl-shadow-dialog);
     --bs-focus-ring-color: var(--sl-focus);
 }
 
-body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* Fluent's semibold headings; sentence case throughout, so no tracked capitals. */
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+    font-weight: 600;
 }
 
-/* Large type reads too loose at default tracking; Apple tightens it as it grows. */
-h1, .h1, h2, .h2, h3, .h3 {
-    letter-spacing: -.015em;
-}
-
-/* Buttons: pills that give a little under the pointer. */
+/* Buttons: Fluent's 32px, 4px-cornered buttons that give a little under the pointer. */
 .btn {
     --bs-btn-font-size: var(--bs-body-font-size);
-    --bs-btn-font-weight: 500;
-    --bs-btn-padding-x: 1rem;
-    --bs-btn-border-radius: var(--bs-border-radius-pill);
+    --bs-btn-font-weight: 600;
+    --bs-btn-padding-x: .75rem;
+    --bs-btn-padding-y: .3125rem;
+    --bs-btn-line-height: 1.43;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, transform 120ms var(--sl-ease-out);
-}
-
-.btn-sm,
-.btn-lg {
-    --bs-btn-border-radius: var(--bs-border-radius-pill);
 }
 
 .btn:active {
@@ -135,69 +152,79 @@ h1, .h1, h2, .h2, h3, .h3 {
 }
 
 .btn-primary {
-    --bs-btn-bg: var(--sl-fill-accent);
-    --bs-btn-border-color: var(--sl-fill-accent);
-    --bs-btn-hover-bg: var(--sl-fill-accent-hover);
-    --bs-btn-hover-border-color: var(--sl-fill-accent-hover);
-    --bs-btn-active-bg: var(--sl-fill-accent-active);
-    --bs-btn-active-border-color: var(--sl-fill-accent-active);
-    --bs-btn-disabled-bg: var(--sl-fill-accent);
-    --bs-btn-disabled-border-color: var(--sl-fill-accent);
+    --bs-btn-bg: var(--sl-btn);
+    --bs-btn-border-color: var(--sl-btn);
+    --bs-btn-hover-bg: var(--sl-btn-hover);
+    --bs-btn-hover-border-color: var(--sl-btn-hover);
+    --bs-btn-active-bg: var(--sl-btn-active);
+    --bs-btn-active-border-color: var(--sl-btn-active);
+    --bs-btn-disabled-bg: var(--sl-btn);
+    --bs-btn-disabled-border-color: var(--sl-btn);
     --bs-btn-focus-shadow-rgb: var(--sl-accent-rgb);
 }
 
-/* Secondary actions become Apple's grey filled button instead of an outline. */
+/* Secondary actions: Fluent's default button, the surface with a hairline border. */
 .btn-outline-secondary {
-    --bs-btn-color: var(--sl-label);
-    --bs-btn-bg: var(--sl-fill);
-    --bs-btn-border-color: transparent;
-    --bs-btn-hover-color: var(--sl-label);
-    --bs-btn-hover-bg: var(--sl-fill-strong);
-    --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-color: var(--sl-label);
-    --bs-btn-active-bg: var(--sl-fill-strong);
-    --bs-btn-active-border-color: transparent;
-    --bs-btn-disabled-color: var(--sl-label-3);
-    --bs-btn-disabled-bg: var(--sl-fill);
-    --bs-btn-disabled-border-color: transparent;
+    --bs-btn-color: var(--sl-ink);
+    --bs-btn-bg: var(--sl-surface);
+    --bs-btn-border-color: var(--sl-line);
+    --bs-btn-hover-color: var(--sl-ink);
+    --bs-btn-hover-bg: var(--sl-raised);
+    --bs-btn-hover-border-color: var(--sl-line);
+    --bs-btn-active-color: var(--sl-ink);
+    --bs-btn-active-bg: var(--sl-raised);
+    --bs-btn-active-border-color: var(--sl-line);
+    --bs-btn-disabled-color: var(--sl-ink-3);
+    --bs-btn-disabled-bg: var(--sl-surface);
+    --bs-btn-disabled-border-color: var(--sl-line);
     --bs-btn-focus-shadow-rgb: var(--sl-accent-rgb);
 }
 
-/* Outlined accent and danger buttons (row actions) become tinted ones. */
+/* Row actions (outlined accent and danger): Fluent's subtle buttons, tinted only on hover. */
 .btn-outline-primary {
     --bs-btn-color: var(--sl-accent);
-    --bs-btn-bg: var(--sl-accent-soft);
+    --bs-btn-bg: transparent;
     --bs-btn-border-color: transparent;
     --bs-btn-hover-color: var(--sl-accent);
-    --bs-btn-hover-bg: var(--sl-accent-soft-strong);
+    --bs-btn-hover-bg: var(--sl-accent-soft);
     --bs-btn-hover-border-color: transparent;
     --bs-btn-active-color: var(--sl-accent);
     --bs-btn-active-bg: var(--sl-accent-soft-strong);
     --bs-btn-active-border-color: transparent;
-    --bs-btn-disabled-color: var(--sl-accent);
-    --bs-btn-disabled-bg: var(--sl-accent-soft);
+    --bs-btn-disabled-color: var(--sl-ink-3);
+    --bs-btn-disabled-bg: transparent;
     --bs-btn-disabled-border-color: transparent;
     --bs-btn-focus-shadow-rgb: var(--sl-accent-rgb);
 }
 
 .btn-outline-danger {
     --bs-btn-color: var(--bs-danger);
-    --bs-btn-bg: rgba(var(--bs-danger-rgb), .1);
+    --bs-btn-bg: transparent;
     --bs-btn-border-color: transparent;
     --bs-btn-hover-color: var(--bs-danger);
-    --bs-btn-hover-bg: rgba(var(--bs-danger-rgb), .18);
+    --bs-btn-hover-bg: rgba(var(--bs-danger-rgb), .1);
     --bs-btn-hover-border-color: transparent;
     --bs-btn-active-color: var(--bs-danger);
-    --bs-btn-active-bg: rgba(var(--bs-danger-rgb), .18);
+    --bs-btn-active-bg: rgba(var(--bs-danger-rgb), .16);
     --bs-btn-active-border-color: transparent;
-    --bs-btn-disabled-color: var(--bs-danger);
-    --bs-btn-disabled-bg: rgba(var(--bs-danger-rgb), .1);
+    --bs-btn-disabled-color: var(--sl-ink-3);
+    --bs-btn-disabled-bg: transparent;
     --bs-btn-disabled-border-color: transparent;
 }
 
-/* Form fields: Bootstrap hard-codes the focus ring and the checked fill. */
+/* Form fields: Fluent's hairline box with a darker underline that turns accent on focus. */
+.form-control,
+.form-select {
+    border-bottom-color: var(--sl-field-line);
+}
+
 .form-control:focus,
-.form-select:focus,
+.form-select:focus {
+    border-color: var(--sl-line);
+    border-bottom-color: var(--sl-accent);
+    box-shadow: inset 0 -1px 0 var(--sl-accent);
+}
+
 .form-check-input:focus {
     border-color: var(--sl-accent);
     box-shadow: 0 0 0 .25rem var(--sl-focus);
@@ -205,84 +232,129 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 .form-check-input:checked,
 .form-check-input[type=checkbox]:indeterminate {
-    background-color: var(--sl-fill-accent);
-    border-color: var(--sl-fill-accent);
+    background-color: var(--sl-btn);
+    border-color: var(--sl-btn);
 }
 
-/* Cards float on the grey page by a soft shadow, not a border. */
+/* Cards: a hairline and Fluent's card shadow, 8px corners. */
 .card {
-    --bs-card-border-width: 0;
+    --bs-card-border-color: var(--sl-line);
     --bs-card-border-radius: var(--bs-border-radius-lg);
-    --bs-card-inner-border-radius: var(--bs-border-radius-lg);
+    --bs-card-inner-border-radius: calc(var(--bs-border-radius-lg) - 1px);
     --bs-card-cap-bg: transparent;
-    box-shadow: var(--sl-shadow);
+    box-shadow: var(--sl-shadow-card);
 }
 
 .card-header {
-    border-bottom: 1px solid var(--sl-separator);
+    font-weight: 600;
 }
 
-.card-footer {
-    border-top: 1px solid var(--sl-separator);
-}
-
+/* Menus: Fluent's menu shadow, opening from the side they grow toward (Popper sets the placement). */
 .dropdown-menu {
     --bs-dropdown-font-size: var(--bs-body-font-size);
-    --bs-dropdown-padding-x: .375rem;
-    --bs-dropdown-border-radius: .75rem;
-    --bs-dropdown-inner-border-radius: .5rem;
-    --bs-dropdown-border-color: var(--sl-separator);
-    --bs-dropdown-box-shadow: var(--sl-shadow-lift);
-    --bs-dropdown-link-hover-bg: var(--sl-fill);
-    --bs-dropdown-link-active-bg: var(--sl-fill-accent);
+    --bs-dropdown-padding-x: .25rem;
+    --bs-dropdown-border-radius: var(--bs-border-radius-lg);
+    --bs-dropdown-inner-border-radius: var(--bs-border-radius);
+    --bs-dropdown-border-color: var(--sl-line);
+    --bs-dropdown-box-shadow: var(--sl-shadow-menu);
+    --bs-dropdown-link-hover-bg: var(--sl-hover-strong);
+    --bs-dropdown-link-active-bg: var(--sl-btn);
     box-shadow: var(--bs-dropdown-box-shadow);
+    transform-origin: top left;
+}
+
+.dropdown-menu-end {
+    transform-origin: top right;
+}
+
+.dropdown-menu[data-popper-placement^=top] {
+    transform-origin: bottom left;
+}
+
+.dropdown-menu.show {
+    animation: sl-pop-in 160ms var(--sl-ease-out);
 }
 
 .dropdown-item {
-    border-radius: .5rem;
+    border-radius: var(--bs-border-radius);
 }
 
+@keyframes sl-pop-in {
+    from {
+        opacity: 0;
+        transform: scale(.96);
+    }
+}
+
+/* Dialogs: Fluent's dialog shadow; they scale up a touch from the centre instead of sliding down. */
 .modal {
+    --bs-modal-width: 440px;
     --bs-modal-border-width: 0;
-    --bs-modal-header-border-color: var(--sl-separator);
-    --bs-modal-footer-border-color: var(--sl-separator);
+    --bs-modal-border-radius: var(--bs-border-radius-lg);
+    --bs-modal-inner-border-radius: var(--bs-border-radius-lg);
+    --bs-modal-box-shadow: var(--sl-shadow-dialog);
+    --bs-modal-header-border-width: 0;
+    --bs-modal-footer-border-width: 0;
+    --bs-modal-padding: 1.5rem;
+    --bs-modal-header-padding: 1.5rem 1.5rem 0;
 }
 
 .modal-content {
-    box-shadow: var(--sl-shadow-lift);
+    box-shadow: var(--bs-modal-box-shadow);
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    line-height: 1.625rem;
+    font-weight: 600;
+}
+
+.modal.fade .modal-dialog {
+    transform: scale(.96);
+    transition: transform 200ms var(--sl-ease-out);
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+.modal-backdrop {
+    --bs-backdrop-opacity: .4;
 }
 
 .table {
     --bs-table-bg: transparent;
-    --bs-table-border-color: var(--sl-separator);
+    --bs-table-border-color: var(--sl-line);
+    --bs-table-hover-bg: var(--sl-hover);
 }
 
 .table > thead th {
+    font-size: .75rem;
     font-weight: 600;
-    color: var(--sl-label-2);
+    color: var(--sl-ink-2);
 }
 
 /* Listing headers (x-table, audit detail) use .table-light, a fixed near-white even in dark mode. */
 .table-light {
-    --bs-table-color: var(--sl-label-2);
-    --bs-table-bg: var(--sl-fill);
-    --bs-table-border-color: var(--sl-separator);
-    --bs-table-hover-color: var(--sl-label);
-    --bs-table-hover-bg: var(--sl-fill-strong);
+    --bs-table-color: var(--sl-ink-2);
+    --bs-table-bg: var(--sl-canvas);
+    --bs-table-border-color: var(--sl-line);
+    --bs-table-hover-color: var(--sl-ink);
+    --bs-table-hover-bg: var(--sl-hover-strong);
 }
 
 .pagination {
     --bs-pagination-font-size: var(--bs-body-font-size);
-    --bs-pagination-border-color: var(--sl-separator);
+    --bs-pagination-border-color: var(--sl-line);
+    --bs-pagination-hover-bg: var(--sl-hover-strong);
     --bs-pagination-focus-box-shadow: 0 0 0 .25rem var(--sl-focus);
-    --bs-pagination-active-bg: var(--sl-fill-accent);
-    --bs-pagination-active-border-color: var(--sl-fill-accent);
+    --bs-pagination-active-bg: var(--sl-btn);
+    --bs-pagination-active-border-color: var(--sl-btn);
 }
 
 .toast {
     --bs-toast-border-radius: var(--bs-border-radius-lg);
-    --bs-toast-border-color: transparent;
-    --bs-toast-box-shadow: var(--sl-shadow-lift);
+    --bs-toast-box-shadow: var(--sl-shadow-toast);
 }
 
 /* Select2's Bootstrap theme hard-codes every colour (white fields, #212529 text, #86b7fe focus),
@@ -292,21 +364,24 @@ h1, .h1, h2, .h2, h3, .h3 {
     color: var(--bs-body-color);
     background-color: var(--bs-body-bg);
     border-color: var(--bs-border-color);
+    border-bottom-color: var(--sl-field-line);
     border-radius: var(--bs-border-radius);
 }
 
 .select2-container--bootstrap-5.select2-container--focus .select2-selection,
 .select2-container--bootstrap-5.select2-container--open .select2-selection,
 .select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field:focus {
-    border-color: var(--sl-accent);
-    box-shadow: 0 0 0 .25rem var(--sl-focus);
+    border-color: var(--sl-line);
+    border-bottom-color: var(--sl-accent);
+    box-shadow: inset 0 -1px 0 var(--sl-accent);
 }
 
 .select2-container--bootstrap-5 .select2-dropdown {
     color: var(--bs-body-color);
     background-color: var(--bs-body-bg);
-    border-color: var(--sl-accent);
+    border-color: var(--sl-line);
     border-radius: var(--bs-border-radius);
+    box-shadow: var(--sl-shadow-menu);
 }
 
 .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered,
@@ -316,7 +391,8 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
     border-color: var(--bs-border-color);
-    border-radius: var(--bs-border-radius-pill);
+    border-radius: var(--bs-border-radius);
+    background-color: var(--sl-accent-soft);
 }
 
 .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered .select2-selection__placeholder,
@@ -329,13 +405,13 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--highlighted {
     color: var(--bs-body-color);
-    background-color: var(--sl-fill);
+    background-color: var(--sl-hover-strong);
 }
 
 .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--selected,
 .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option[aria-selected=true]:not(.select2-results__option--highlighted) {
     color: #fff;
-    background-color: var(--sl-fill-accent);
+    background-color: var(--sl-btn);
 }
 
 .select2-container--bootstrap-5.select2-container--disabled .select2-selection,
@@ -345,7 +421,7 @@ h1, .h1, h2, .h2, h3, .h3 {
     border-color: var(--bs-border-color);
 }
 
-/* Bootstrap already drops button transitions under reduced motion; this keeps the press scale out too. */
+/* Reduced motion: no press scale, menus appear without growing, dialogs only fade. */
 @media (prefers-reduced-motion: reduce) {
     .btn {
         transition: none;
@@ -353,5 +429,14 @@ h1, .h1, h2, .h2, h3, .h3 {
 
     .btn:active {
         transform: none;
+    }
+
+    .dropdown-menu.show {
+        animation: none;
+    }
+
+    .modal.fade .modal-dialog {
+        transform: none;
+        transition: none;
     }
 }

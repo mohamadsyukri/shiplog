@@ -14,29 +14,30 @@
     @stack('styles')
 </head>
 <body>
-    <div class="d-lg-flex">
-        {{-- The sidebar is built for a signed-in user; a demo visitor has none (config/shiplog.php). --}}
+    @include('layouts._topbar')
+
+    <div class="app-shell">
+        {{-- The menu is built for a signed-in user; a demo visitor has none (config/shiplog.php). --}}
         @auth
             @include('layouts._sidebar')
         @endauth
 
-        <div class="app-main flex-grow-1">
-            @include('layouts._topbar')
-
+        <div class="app-main">
             @if (config('shiplog.demo'))
-                <div class="alert alert-info border-0 border-bottom rounded-0 mb-0 small" role="note">
+                <div class="app-demo-strip" role="note">
                     <strong>{{ __('Demo — made-up data.') }}</strong>
                     {{ __('Shiplog is open source:') }}
                     <a href="{{ config('shiplog.repository_url') }}">{{ config('shiplog.repository_url') }}</a>
                 </div>
             @endif
 
-            <main class="container-fluid py-4">
+            <main class="app-content">
                 @if ($title || $breadcrumbs)
                     <div class="mb-3">
-                        <x-breadcrumb :items="$breadcrumbs" />
+                        {{-- From md the breadcrumb rides in the command bar (layouts/_topbar). --}}
+                        <x-breadcrumb :items="$breadcrumbs" class="d-md-none" />
                         @if ($title)
-                            <h1 class="h4 mb-0">{{ $title }}</h1>
+                            <h1 class="app-title">{{ $title }}</h1>
                         @endif
                     </div>
                 @endif

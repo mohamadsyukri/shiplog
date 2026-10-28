@@ -7,49 +7,358 @@
 @import '@fontsource-variable/geist-mono';
 @import './theme.css';
 
-/* App shell: sidebar on the left (an offcanvas below lg), content on the right. */
+/*
+ * App shell (the Workspace layout): a command bar across the top, the menu pane on the left (an offcanvas
+ * below lg), the page on the right. layouts/_theme restores a collapsed menu before the first paint.
+ */
 :root {
-    --app-sidebar-width: 250px;
+    --app-bar-height: 48px;
+    --app-nav-width: 240px;
 }
 
 body {
     background-color: var(--bs-tertiary-bg);
 }
 
-.app-sidebar {
-    width: var(--app-sidebar-width);
+.app-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    height: var(--app-bar-height);
+    padding: 0 .75rem 0 .5rem;
+    background-color: var(--sl-header);
+    color: var(--sl-header-ink);
 }
 
-@media (min-width: 992px) {
-    .app-sidebar {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto;
-        flex-shrink: 0;
+.app-bar-btn {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    place-items: center;
+    border: 0;
+    border-radius: var(--bs-border-radius);
+    background: transparent;
+    color: inherit;
+    font-size: 1.25rem;
+}
+
+.app-bar-btn:hover {
+    background-color: var(--sl-header-hover);
+}
+
+.app-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    flex-shrink: 0;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.app-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: var(--bs-border-radius);
+    background-color: var(--sl-brand);
+    color: var(--sl-brand-ink);
+}
+
+.app-mark svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+}
+
+.app-mark-lg {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--bs-border-radius-xl);
+}
+
+.app-mark-lg svg {
+    width: 32px;
+    height: 32px;
+}
+
+/* The page's breadcrumb rides in the command bar (from md; smaller screens show it above the title). */
+.app-crumb {
+    min-width: 0;
+    margin-left: .5rem;
+}
+
+.app-crumb .breadcrumb {
+    --bs-breadcrumb-divider-color: var(--sl-header-ink-2);
+    --bs-breadcrumb-item-active-color: var(--sl-header-ink);
+    flex-wrap: nowrap;
+    margin: 0;
+    font-size: .8125rem;
+    white-space: nowrap;
+}
+
+.app-crumb a {
+    color: var(--sl-header-ink-2);
+    text-decoration: none;
+}
+
+.app-crumb a:hover {
+    color: var(--sl-header-ink);
+    text-decoration: underline;
+}
+
+.app-bar-end {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-left: auto;
+}
+
+/* The Light / Dark / Auto switch (resources/js/components/theme.js); names show from xl, icons below. */
+.app-theme {
+    display: flex;
+    padding: 2px;
+    border-radius: var(--bs-border-radius);
+    background-color: var(--sl-header-field);
+}
+
+.app-theme button {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    height: 28px;
+    padding: 0 .5rem;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--sl-header-ink-2);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.app-theme button:hover {
+    color: var(--sl-header-ink);
+}
+
+.app-theme button[aria-pressed="true"] {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    box-shadow: var(--sl-shadow-card);
+}
+
+.app-theme span {
+    display: none;
+}
+
+@media (min-width: 1200px) {
+    .app-theme span {
+        display: inline;
     }
 }
 
-.app-sidebar .nav-link {
-    color: var(--bs-body-color);
-    border-radius: var(--bs-border-radius);
-}
-
-.app-sidebar .nav-link:hover:not(.active) {
-    background-color: var(--bs-secondary-bg);
-}
-
-.app-sidebar .nav-link.active {
-    background-color: var(--bs-primary);
+.app-avatar {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--sl-btn);
     color: #fff;
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.app-account {
+    display: flex;
+    flex-direction: column;
+    min-width: 13rem;
+    color: var(--bs-body-color);
+}
+
+.app-account span {
+    color: var(--bs-secondary-color);
+}
+
+.app-shell {
+    display: flex;
+    min-height: calc(100vh - var(--app-bar-height));
+}
+
+/* The menu pane. */
+.app-nav {
+    background-color: var(--sl-nav);
+    border-right: 1px solid var(--bs-border-color);
+    --bs-offcanvas-width: 280px;
+    --bs-offcanvas-bg: var(--sl-nav);
+    --bs-offcanvas-transition: transform 300ms var(--sl-ease-drawer);
+}
+
+.app-nav-body {
+    padding: .5rem;
+}
+
+.app-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.app-nav-heading {
+    display: block;
+    margin: 1rem .625rem .25rem;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+}
+
+.app-nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    height: 36px;
+    padding: 0 .625rem;
+    border-radius: var(--bs-border-radius);
+    color: var(--bs-body-color);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.app-nav-link i {
+    font-size: 1.0625rem;
+    color: var(--bs-secondary-color);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .app-nav-link:hover {
+        background-color: var(--sl-hover-strong);
+        color: var(--bs-body-color);
+    }
+}
+
+.app-nav-link.active {
+    background-color: var(--sl-accent-soft);
+    font-weight: 600;
+}
+
+.app-nav-link.active::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    bottom: 9px;
+    left: 0;
+    width: 3px;
+    border-radius: 2px;
+    background-color: var(--sl-accent);
+}
+
+.app-nav-link.active i {
+    color: var(--sl-accent);
+}
+
+@media (min-width: 992px) {
+    .app-nav {
+        position: sticky;
+        top: var(--app-bar-height);
+        width: var(--app-nav-width);
+        height: calc(100vh - var(--app-bar-height));
+        flex-shrink: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    /* Collapsed (resources/js/components/nav.js): icons only, each named by its title tooltip. */
+    html[data-nav-collapsed] {
+        --app-nav-width: 56px;
+    }
+
+    html[data-nav-collapsed] .app-nav-link span,
+    html[data-nav-collapsed] .app-nav-heading {
+        display: none;
+    }
+
+    html[data-nav-collapsed] .app-nav-group {
+        margin-top: .5rem;
+        padding-top: .5rem;
+        border-top: 1px solid var(--bs-border-color);
+    }
 }
 
 /* Stops wide tables from pushing the layout sideways. */
 .app-main {
+    flex-grow: 1;
     min-width: 0;
+}
+
+.app-content {
+    padding: 1.25rem 1rem 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .app-content {
+        padding: 1.5rem 1.75rem 3rem;
+    }
+}
+
+.app-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 600;
+}
+
+.app-demo-strip {
+    padding: .5rem 1rem;
+    border-bottom: 1px solid var(--bs-border-color);
+    background-color: var(--sl-accent-soft);
+    font-size: .8125rem;
+}
+
+/* Toasts: a Fluent card in the bottom-right corner that rises into place (resources/js/components/toast.js). */
+.app-toast {
+    --bs-toast-max-width: 380px;
+    --bs-toast-font-size: .875rem;
+    --bs-toast-bg: var(--bs-body-bg);
+    --bs-toast-border-color: var(--bs-border-color);
+    padding: .75rem .875rem;
+}
+
+.app-toast.fade {
+    transition: opacity 160ms ease-out, transform 160ms var(--sl-ease-out);
+}
+
+.app-toast.showing {
+    transform: translateY(8px);
+}
+
+.app-toast-icon {
+    font-size: 1.125rem;
+    line-height: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-toast.fade {
+        transition: opacity 160ms ease-out;
+    }
+
+    .app-toast.showing {
+        transform: none;
+    }
 }
 
 /* Guest pages (sign in, password reset). */
 .guest-card {
-    max-width: 420px;
+    max-width: 400px;
 }
