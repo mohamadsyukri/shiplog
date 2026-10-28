@@ -12,7 +12,6 @@ use App\Services\Admin\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Blade;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -29,13 +28,12 @@ final class UserController extends Controller
     {
         return DataTables::eloquent($this->users->listingQuery())
             ->addIndexColumn()
-            ->addColumn('roles', fn (User $user): string => e($user->roles->pluck('name')->implode(', ')))
-            ->editColumn('is_active', fn (User $user): string => Blade::render(
-                '<span class="badge text-bg-{{ $active ? \'success\' : \'secondary\' }}">{{ $active ? __(\'Active\') : __(\'Inactive\') }}</span>',
-                ['active' => $user->is_active],
-            ))
+            // Searching and sorting still use the name column; only the cell shows the initials beside it.
+            ->editColumn('name', fn (User $user): string => view('modules.admin.users._partials.name-cell', ['user' => $user])->render())
+            ->addColumn('roles', fn (User $user): string => view('modules.admin.users._partials.roles-cell', ['roles' => $user->roles->pluck('name')])->render())
+            ->editColumn('is_active', fn (User $user): string => view('modules.admin.users._partials.status-cell', ['active' => $user->is_active])->render())
             ->addColumn('action', fn (User $user): string => view('modules.admin.users._partials.row-actions', ['user' => $user])->render())
-            ->rawColumns(['is_active', 'action'])
+            ->rawColumns(['name', 'roles', 'is_active', 'action'])
             ->toJson();
     }
 

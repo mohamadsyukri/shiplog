@@ -343,13 +343,111 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
     --bs-table-hover-bg: var(--sl-hover-strong);
 }
 
+/* Listings (x-table's DataTables, the imports history): Fluent's data grid. Headers stay one line; rows get
+   room; the DataTables controls are small and quiet. */
+.table:not(.table-sm) > :not(caption) > * > * {
+    padding: .625rem .75rem;
+}
+
+.table > thead th {
+    white-space: nowrap;
+}
+
+.dt-container .dt-search label,
+.dt-container .dt-length label,
+.dt-container .dt-info {
+    font-size: .75rem;
+    color: var(--sl-ink-2);
+}
+
+.dt-container .dt-search input {
+    width: 14rem;
+    max-width: 100%;
+}
+
+.dt-container .dt-empty {
+    padding: 2rem .75rem;
+    text-align: center;
+    color: var(--sl-ink-2);
+}
+
+/* Borderless 32px page buttons; the current page tinted, as in the menu pane. */
 .pagination {
-    --bs-pagination-font-size: var(--bs-body-font-size);
-    --bs-pagination-border-color: var(--sl-line);
+    --bs-pagination-padding-x: .5rem;
+    --bs-pagination-padding-y: .3125rem;
+    --bs-pagination-font-size: .8125rem;
+    --bs-pagination-color: var(--sl-ink);
+    --bs-pagination-bg: transparent;
+    --bs-pagination-border-width: 0;
+    --bs-pagination-hover-color: var(--sl-ink);
     --bs-pagination-hover-bg: var(--sl-hover-strong);
     --bs-pagination-focus-box-shadow: 0 0 0 .25rem var(--sl-focus);
-    --bs-pagination-active-bg: var(--sl-btn);
-    --bs-pagination-active-border-color: var(--sl-btn);
+    --bs-pagination-active-color: var(--sl-accent);
+    --bs-pagination-active-bg: var(--sl-accent-soft);
+    --bs-pagination-disabled-color: var(--sl-ink-3);
+    --bs-pagination-disabled-bg: transparent;
+    gap: 2px;
+}
+
+.pagination .page-link {
+    min-width: 2rem;
+    border-radius: var(--bs-border-radius) !important;
+    text-align: center;
+}
+
+.pagination .active > .page-link {
+    font-weight: 600;
+}
+
+/* A person, their roles and their status in a listing (the Users list's cells). */
+.app-person {
+    display: inline-flex;
+    align-items: center;
+    gap: .625rem;
+    font-weight: 600;
+}
+
+.app-person-initials {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--sl-accent-soft);
+    color: var(--sl-accent);
+    font-size: .75rem;
+}
+
+.app-pill {
+    display: inline-block;
+    margin: .125rem .25rem .125rem 0;
+    padding: .0625rem .5rem;
+    border-radius: 1rem;
+    background-color: var(--sl-raised);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.app-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+}
+
+.app-status i {
+    width: .5rem;
+    height: .5rem;
+    border-radius: 50%;
+    background-color: var(--bs-success);
+}
+
+.app-status.is-off {
+    color: var(--sl-ink-2);
+}
+
+.app-status.is-off i {
+    background-color: var(--sl-ink-3);
 }
 
 .toast {

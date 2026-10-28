@@ -1,7 +1,8 @@
 /**
  * Server-side DataTables for every <table data-datatable> (rendered by the x-table component),
  * fed by a yajra endpoint. Filters live in a separate form named by data-filters; its fields are
- * sent with every request and the table reloads when the form is submitted or reset.
+ * sent with every request and the table reloads when the form is submitted or reset. The wording is
+ * DataTables' own English: the app is English only, so it passes no language.
  */
 export function initDataTables(root = document) {
     root.querySelectorAll('table[data-datatable]:not([data-initialised])').forEach((table) => {
@@ -24,7 +25,6 @@ export function initDataTables(root = document) {
             },
             columns: JSON.parse(table.dataset.columns),
             order: JSON.parse(table.dataset.order || '[]'),
-            language: window.dataTableLanguage ?? {},
             pageLength: 10,
         });
 

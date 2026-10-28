@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
@@ -28,6 +29,16 @@ class User extends Authenticatable
             ->logOnly(['name', 'email', 'is_active'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
+    }
+
+    /**
+     * Up to two capitals from the name ("Jane van Doe" gives "JV"), for the Users list's avatar.
+     */
+    public function initials(): string
+    {
+        return Str::of($this->name)->explode(' ')->filter()->take(2)
+            ->map(fn (string $word): string => mb_strtoupper(mb_substr($word, 0, 1)))
+            ->implode('');
     }
 
     /**

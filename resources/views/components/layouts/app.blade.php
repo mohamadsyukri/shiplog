@@ -49,10 +49,5 @@
 
     @include('layouts._toasts')
     @include('layouts._confirm-modal')
-
-    @php($dataTableLanguage = trans('datatables'))
-    <script>
-        window.dataTableLanguage = @json(is_array($dataTableLanguage) ? $dataTableLanguage : []);
-    </script>
 </body>
 </html>
