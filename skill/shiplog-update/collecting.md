@@ -5,7 +5,10 @@ Paths in the config may start with `~`; expand them. Every day is a date in the 
 
 ## Git commits
 
-For each lane, for each folder in `repos` (skip and report a folder that doesn't exist):
+For each lane, for each folder in `repos` (skip and report a folder that doesn't exist). Read
+commits only when `git -C <folder> rev-parse --show-toplevel` prints that same folder: in a folder
+that isn't a repository itself, git climbs to the repository above it and lists that one's commits
+instead. Skip such a folder for commits and report it; its sessions still belong to the lane.
 
 ```bash
 TZ=Asia/Kuala_Lumpur git -C ~/code/client-portal log --all --no-merges \
